@@ -1,5 +1,35 @@
 FROM ghcr.io/ehfd/nvidia-egl-desktop:20.04
 
+ARG UID=9001
+ARG GID=9001
+ARG UNAME=nvidia
+ARG HOSTNAME=docker
+
+ARG NEW_HOSTNAME=${HOSTNAME}-Docker
+
+ARG USERNAME=$UNAME
+ARG HOME=/home/$USERNAME
+
+USER root
+RUN userdel user
+RUN useradd -u $UID -m $USERNAME && \
+        echo "$USERNAME:$USERNAME" | chpasswd && \
+        usermod --shell /bin/bash $USERNAME && \
+        usermod -aG sudo $USERNAME && \
+        echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME && \
+        chmod 0440 /etc/sudoers.d/$USERNAME && \
+        usermod  --uid $UID $USERNAME && \
+        groupmod --gid $GID $USERNAME && \
+        chown -R $USERNAME:$USERNAME $HOME
+
+RUN sed -i "s/user=user/user=$USERNAME/g" /etc/supervisord.conf
+RUN sed -i "s/user/$USERNAME/g" /etc/entrypoint.sh
+RUN sed -i "s/\/home\/user/\/home\/$USERNAME/g" /etc/entrypoint.sh
+# RUN sed -i "s/sudo chown user:user//g" /etc/entrypoint.sh
+# RUN sed -i "echo \"user:$PASSWD\"//g" /etc/entrypoint.sh
+USER $USERNAME
+
+
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND noninteractive
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -38,8 +68,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 RUN sudo rosdep init && \
     rosdep update
 
-RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc && \
-    echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
+# RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc && \
+#     echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 # disabled beep sound
 RUN echo "set bell-style none" >> ~/.inputrc
