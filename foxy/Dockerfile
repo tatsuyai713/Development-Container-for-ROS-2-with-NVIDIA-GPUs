@@ -68,8 +68,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 RUN sudo rosdep init && \
     rosdep update
 
-# RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc && \
-#     echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
+RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc && \
+    echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 # disabled beep sound
 RUN echo "set bell-style none" >> ~/.inputrc
