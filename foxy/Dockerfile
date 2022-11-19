@@ -64,6 +64,13 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     sudo apt-get clean && \
     sudo rm -rf /var/lib/apt/lists/*
 
+# install cuda tensorrt
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+        cuda libcudnn8 libcudnn8-dev tensorrt tensorrt-dev \
+        && \
+    sudo apt-get clean && \
+    sudo rm -rf /var/lib/apt/lists/*
+
 # initialize rosdep
 RUN sudo rosdep init && \
     rosdep update
