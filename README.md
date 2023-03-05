@@ -34,7 +34,7 @@ If you customize setting, please read <https://github.com/selkies-project/docker
 
 ### Access KDE Plasma Desktop via web browser
 
-Browse <http://127.0.0.1:<uid>/>.  
-In this docker container, default account is `your login user`.  
+Browse <http://127.0.0.1:uid/>.  
+In this docker container, default account is `your login user name`.  
 
 [^1]: <https://github.com/selkies-project/docker-nvidia-egl-desktop/blob/main/README.md>
