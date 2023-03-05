@@ -523,6 +523,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 USER $USERNAME
 
+# install nodejs 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+        nodejs && \
+    sudo apt-get clean && \
+    sudo rm -rf /var/lib/apt/lists/*
+
 # initialize rosdep
 RUN sudo rosdep init && \
     rosdep update
