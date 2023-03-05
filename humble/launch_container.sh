@@ -97,6 +97,10 @@ DOCKER_OPT="${DOCKER_OPT} \
 		--env=QT_X11_NO_MITSHM=1 \
         --volume=${XAUTH}:${XAUTH} \
         --env=DISPLAY=${DISPLAY} \
+		-e PULSE_COOKIE=/tmp/pulse/cookie \
+		-e PULSE_SERVER=unix:/tmp/pulse/native \
+		-v /run/user/1000/pulse/native:/tmp/pulse/native \
+		-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
         -w ${DOCKER_WORK_DIR} \
         -u ${USER} \
 		--shm-size=4096m -e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H}  -e NOVNC_ENABLE=true -p $(id -u):8080 \
