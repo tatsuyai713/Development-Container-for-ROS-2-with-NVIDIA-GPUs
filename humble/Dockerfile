@@ -1,4 +1,4 @@
-FROM ghcr.io/selkies-project/nvidia-egl-desktop:20.04
+FROM ghcr.io/selkies-project/nvidia-egl-desktop:22.04
 
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND noninteractive
@@ -17,11 +17,12 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     sudo apt-get clean && \
     sudo rm -rf /var/lib/apt/lists/*
 
-# install ROS2 Galactic
+# install ROS2 Humble
 RUN sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
-        ros-galactic-desktop \
+        ros-humble-desktop \
+        ros-dev-tools \
         && \
     sudo apt-get clean && \
     sudo rm -rf /var/lib/apt/lists/*
@@ -38,7 +39,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 RUN sudo rosdep init && \
     rosdep update
 
-RUN echo "source /opt/ros/galactic/setup.bash" >> ~/.bashrc && \
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
     echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 # disabled beep sound

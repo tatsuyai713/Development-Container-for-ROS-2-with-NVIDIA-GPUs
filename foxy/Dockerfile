@@ -1,4 +1,4 @@
-FROM ghcr.io/ehfd/nvidia-egl-desktop:20.04
+FROM ghcr.io/selkies-project/nvidia-egl-desktop:20.04
 
 ARG UID=9001
 ARG GID=9001
@@ -82,4 +82,3 @@ RUN sudo rosdep init && \
 RUN echo "set bell-style none" >> ~/.inputrc
 
 RUN sudo rm /etc/apt/apt.conf.d/docker-clean
-
