@@ -269,6 +269,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
         kcharselect \
         kdeconnect \
         kde-spectacle \
+        kde-config-screenlocker \
+        kde-config-updates \
         kdf \
         kget \
         kgpg \
