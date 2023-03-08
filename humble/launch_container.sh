@@ -108,7 +108,7 @@ DOCKER_OPT="${DOCKER_OPT} \
         --add-host `hostname`-Docker:127.0.1.1"
 		
 ## For nvidia-docker
-DOCKER_OPT="${DOCKER_OPT} --gpus all --runtime=nvidia "
+#DOCKER_OPT="${DOCKER_OPT} --gpus all --runtime=nvidia "
 DOCKER_OPT="${DOCKER_OPT} --privileged -it "
 
 # Device
@@ -150,8 +150,30 @@ if [ ! "$CONTAINER_ID" ]; then
 			nvidia_egl_desktop_ws:latest
 	fi
 else
-	docker start $CONTAINER_ID
-	docker exec -it $CONTAINER_ID /bin/bash
+	if [ ! $# -ne 1 ]; then
+		if [ "setup" = $1 ]; then
+			echo 'Now commiting docker container...'
+			docker commit nvidia_egl_desktop_docker nvidia_egl_desktop_ws:latest
+			docker stop $CONTAINER_ID
+			docker rm $CONTAINER_ID -f
+			InputVNCPassword
+			docker run ${DOCKER_OPT} \
+				--name=${DOCKER_NAME} \
+				-e PASSWD=${VNC_PASSWORD}  -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
+				--entrypoint "/usr/bin/supervisord" \
+				nvidia_egl_desktop_ws:latest
+			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_desktop_ws | awk '{print $1}')
+			docker commit nvidia_egl_desktop_docker nvidia_egl_desktop_ws:latest
+			docker stop $CONTAINER_ID
+			docker rm $CONTAINER_ID -f
+		else
+			docker start $CONTAINER_ID
+			docker exec -it $CONTAINER_ID /bin/bash
+		fi
+	else
+		docker start $CONTAINER_ID
+		docker exec -it $CONTAINER_ID /bin/bash
+	fi
 fi
 
 xhost -local:`hostname`-Docker
