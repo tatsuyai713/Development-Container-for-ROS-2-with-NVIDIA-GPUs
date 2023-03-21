@@ -559,22 +559,14 @@ RUN sudo sed -i "s/<user>/$USERNAME/g" /etc/supervisord.conf
 
 RUN sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
 
-# RUN sudo apt-get update \
-#     && sudo apt-get install -y locales \
-#     && sudo locale-gen ja_JP.UTF-8 \
-#     && echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc
-
-# vim setting
-# RUN echo '\n\
-#     set fenc=utf-8\n\
-#     set encoding=utf-8\n\
-#     set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8\n\
-#     set fileformats=unix,dos,mac\n\
-#     syntax on' >> /home/${USERNAME}/.vimrc
+RUN sudo apt-get update \
+    && sudo apt-get install -y locales \
+    && sudo locale-gen ja_JP.UTF-8 \
+    && echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc
 
 ENV TZ Asia/Tokyo
-# ENV LANG ja_JP.UTF-8
-# ENV LANGUAGE ja_JP:ja
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
 
 
 EXPOSE 8080
