@@ -542,22 +542,21 @@ RUN sudo sed -i "s/<user>/$USERNAME/g" /etc/supervisord.conf
 
 RUN sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
 
-# RUN sudo apt-get update \
-#     && sudo apt-get install -y locales \
-#     && sudo locale-gen ja_JP.UTF-8 \
-#     && echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc
+RUN sudo apt-get update \
+    && sudo apt-get install -y locales fcitx-mozc language-pack-ja\
+    && sudo locale-gen ja_JP.UTF-8 \
+    && echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc
 
-# vim setting
-# RUN echo '\n\
-#     set fenc=utf-8\n\
-#     set encoding=utf-8\n\
-#     set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8\n\
-#     set fileformats=unix,dos,mac\n\
-#     syntax on' >> /home/${USERNAME}/.vimrc
+RUN sudo apt-get -y update \
+ && sudo apt-get install -y init systemd \
+ && sudo apt-get install -y net-tools iputils-ping curl wget telnet less vim sudo \
+ && sudo apt-get install -y tzdata locales && sudo locale-gen ja_JP.UTF-8 \
+ && sudo apt-get install -y g++ cmake fcitx-libs-dev libdbus-1-dev fcitx-module-dbus \
+ && sudo dbus-launch --sh-syntax --exit-with-session > /dev/null
 
 ENV TZ Asia/Tokyo
-# ENV LANG ja_JP.UTF-8
-# ENV LANGUAGE ja_JP:ja
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
 
 
 EXPOSE 8080
