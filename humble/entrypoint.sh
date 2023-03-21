@@ -63,6 +63,8 @@ else
   $KDE_START &
 fi
 
+dbus-launch fcitx &
+
 # Add custom processes right below this line, or within `supervisord.conf` to perform service management similar to systemd
 
 echo "Session Running. Press [Return] to exit."
