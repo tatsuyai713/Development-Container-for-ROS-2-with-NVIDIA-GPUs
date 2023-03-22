@@ -542,17 +542,14 @@ RUN sudo sed -i "s/<user>/$USERNAME/g" /etc/supervisord.conf
 
 RUN sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
 
-RUN sudo apt-get update \
-    && sudo apt-get install -y locales fcitx-mozc language-pack-ja\
-    && sudo locale-gen ja_JP.UTF-8 \
-    && echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc
-
 RUN sudo apt-get -y update \
- && sudo apt-get install -y init systemd \
+ && sudo apt-get install -y init systemd locales fcitx-mozc language-pack-ja \
  && sudo apt-get install -y net-tools iputils-ping curl wget telnet less vim sudo \
  && sudo apt-get install -y tzdata locales && sudo locale-gen ja_JP.UTF-8 \
- && sudo apt-get install -y g++ cmake fcitx-libs-dev libdbus-1-dev fcitx-module-dbus \
- && sudo dbus-launch --sh-syntax --exit-with-session > /dev/null
+ && sudo apt-get install -y g++ cmake fcitx-libs-dev libdbus-1-dev fcitx-module-dbus kde-config-fcitx \
+ && sudo dbus-launch --sh-syntax --exit-with-session > /dev/null \
+ && sudo locale-gen ja_JP.UTF-8 \
+&& echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc
 
 ENV TZ Asia/Tokyo
 ENV LANG ja_JP.UTF-8
