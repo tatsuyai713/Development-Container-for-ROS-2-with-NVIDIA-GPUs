@@ -558,6 +558,7 @@ RUN { \
     echo "Comment=Contains removed files"; \
     echo "Icon=user-trash-full"; \
     echo "EmptyIcon=user-trash"; \
+    echo "URL=trash:/"; \
     echo "Type=Link"; \
     } > /home/${USERNAME}/Desktop/trash.desktop
 
