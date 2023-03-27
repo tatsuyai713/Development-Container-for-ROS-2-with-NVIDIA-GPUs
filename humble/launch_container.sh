@@ -26,12 +26,37 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 		if [ "build" = $1 ]; then
 			if [ "$http_proxy" ]; then
 				echo "Image ${NAME_IMAGE} does not exist."
-				echo 'Now building image with proxy...'
+				echo 'Now building JP image with proxy...'
 				docker build --file=./proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
 			else
 				echo "Image ${NAME_IMAGE} does not exist."
-				echo 'Now building image without proxy...'
+				echo 'Now building JP image without proxy...'
 				docker build --file=./noproxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER
+			fi
+			exit
+		fi
+	elif [ ! $# -ne 2 ]; then
+		if [ "build" = $1 ]; then
+			if [ "US" = $2 ]; then
+				if [ "$http_proxy" ]; then
+					echo "Image ${NAME_IMAGE} does not exist."
+					echo 'Now building US image with proxy...'
+					docker build --file=./proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg IN_LOCALE='US' --build-arg IN_TZ='UTC'  --build-arg IN_LANG='en_US.UTF-8' --build-arg IN_LANGUAGE='en_US:en' --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
+				else
+					echo "Image ${NAME_IMAGE} does not exist."
+					echo 'Now building US image without proxy...'
+					docker build --file=./noproxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg IN_LOCALE='US' --build-arg IN_TZ='UTC' --build-arg IN_LANG='en_US.UTF-8' --build-arg IN_LANGUAGE='en_US:en'
+				fi
+			else
+				if [ "$http_proxy" ]; then
+					echo "Image ${NAME_IMAGE} does not exist."
+					echo 'Now building JP image with proxy...'
+					docker build --file=./proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
+				else
+					echo "Image ${NAME_IMAGE} does not exist."
+					echo 'Now building JP image without proxy...'
+					docker build --file=./noproxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER
+				fi
 			fi
 			exit
 		fi
@@ -108,8 +133,8 @@ DOCKER_OPT="${DOCKER_OPT} \
         --add-host `hostname`-Docker:127.0.1.1"
 		
 ## For nvidia-docker
-#DOCKER_OPT="${DOCKER_OPT} --gpus all --runtime=nvidia "
-DOCKER_OPT="${DOCKER_OPT} --privileged -it "
+DOCKER_OPT="${DOCKER_OPT} --gpus all --runtime=nvidia "
+DOCKER_OPT="${DOCKER_OPT} --privileged "
 
 # Device
 if [ ! $# -ne 1 ]; then
@@ -130,6 +155,24 @@ if [ ! "$CONTAINER_ID" ]; then
 			InputVNCPassword
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
+				-it -e PASSWD=${VNC_PASSWORD}  -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
+				--entrypoint "/usr/bin/supervisord" \
+				nvidia_egl_desktop_ws:latest
+			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_desktop_ws | awk '{print $1}')
+			docker commit nvidia_egl_desktop_docker nvidia_egl_desktop_ws:latest
+			docker stop $CONTAINER_ID
+			docker rm $CONTAINER_ID -f
+		else
+			docker run ${DOCKER_OPT} \
+				--name=${DOCKER_NAME} \
+				-it --entrypoint "bash" \
+				nvidia_egl_desktop_ws:latest
+		fi
+	elif [ ! $# -ne 2 ]; then
+		if [ "setup" = $1 ]; then
+			VNC_PASSWORD=$2
+			docker run ${DOCKER_OPT} \
+				--name=${DOCKER_NAME} \
 				-e PASSWD=${VNC_PASSWORD}  -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_desktop_ws:latest
@@ -140,13 +183,13 @@ if [ ! "$CONTAINER_ID" ]; then
 		else
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
-				--entrypoint "bash" \
+				-it --entrypoint "bash" \
 				nvidia_egl_desktop_ws:latest
 		fi
 	else
 		docker run ${DOCKER_OPT} \
 			--name=${DOCKER_NAME} \
-			--entrypoint "bash" \
+			-it --entrypoint "bash" \
 			nvidia_egl_desktop_ws:latest
 	fi
 else
@@ -160,7 +203,7 @@ else
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-e PASSWD=${VNC_PASSWORD}  -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				--entrypoint "/usr/bin/supervisord" \
+				-it --entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_desktop_ws:latest
 			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_desktop_ws | awk '{print $1}')
 			docker commit nvidia_egl_desktop_docker nvidia_egl_desktop_ws:latest
