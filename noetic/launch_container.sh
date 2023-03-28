@@ -18,7 +18,7 @@ sudo service docker start
 
 sleep 3
 
-NAME_IMAGE='nvidia_egl_jammy_desktop_ws'
+NAME_IMAGE='nvidia_egl_focal_desktop_ws'
 
 # Make Container
 if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
@@ -78,7 +78,7 @@ fi
 if [ ! $# -ne 1 ]; then
 	if [ "commit" = $1 ]; then
 		echo 'Now commiting docker container...'
-		docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+		docker commit nvidia_egl_desktop_docker nvidia_egl_focal_desktop_ws:latest
 		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_desktop_docker | awk '{print $1}')
 		docker stop $CONTAINER_ID
 		docker rm $CONTAINER_ID -f
@@ -146,7 +146,7 @@ fi
 
 ## Allow X11 Connection
 xhost +local:`hostname`-Docker
-CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws: | awk '{print $1}')
+CONTAINER_ID=$(docker ps -a | grep nvidia_egl_focal_desktop_ws: | awk '{print $1}')
 
 # Run Container
 if [ ! "$CONTAINER_ID" ]; then
@@ -157,16 +157,16 @@ if [ ! "$CONTAINER_ID" ]; then
 				--name=${DOCKER_NAME} \
 				-it -e PASSWD=${VNC_PASSWORD}  -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
 				--entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+				nvidia_egl_focal_desktop_ws:latest
+			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_focal_desktop_ws | awk '{print $1}')
+			docker commit nvidia_egl_desktop_docker nvidia_egl_focal_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-it --entrypoint "bash" \
-				nvidia_egl_jammy_desktop_ws:latest
+				nvidia_egl_focal_desktop_ws:latest
 		fi
 	elif [ ! $# -ne 2 ]; then
 		if [ "setup" = $1 ]; then
@@ -175,28 +175,28 @@ if [ ! "$CONTAINER_ID" ]; then
 				--name=${DOCKER_NAME} \
 				-e PASSWD=${VNC_PASSWORD}  -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
 				--entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+				nvidia_egl_focal_desktop_ws:latest
+			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_focal_desktop_ws | awk '{print $1}')
+			docker commit nvidia_egl_desktop_docker nvidia_egl_focal_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-it --entrypoint "bash" \
-				nvidia_egl_jammy_desktop_ws:latest
+				nvidia_egl_focal_desktop_ws:latest
 		fi
 	else
 		docker run ${DOCKER_OPT} \
 			--name=${DOCKER_NAME} \
 			-it --entrypoint "bash" \
-			nvidia_egl_jammy_desktop_ws:latest
+			nvidia_egl_focal_desktop_ws:latest
 	fi
 else
 	if [ ! $# -ne 1 ]; then
 		if [ "setup" = $1 ]; then
 			echo 'Now commiting docker container...'
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+			docker commit nvidia_egl_desktop_docker nvidia_egl_focal_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 			InputVNCPassword
@@ -204,9 +204,9 @@ else
 				--name=${DOCKER_NAME} \
 				-e PASSWD=${VNC_PASSWORD}  -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
 				-it --entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+				nvidia_egl_focal_desktop_ws:latest
+			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_focal_desktop_ws | awk '{print $1}')
+			docker commit nvidia_egl_desktop_docker nvidia_egl_focal_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
