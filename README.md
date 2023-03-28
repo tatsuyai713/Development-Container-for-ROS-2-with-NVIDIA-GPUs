@@ -1,12 +1,10 @@
 # nvidia-egl-desktop-with-ros
 ## Introduction
 
-This is a Dockerfile to use ROS2 on KDE Plasma Desktop container with NVIDIA GPU.  
+This is a Dockerfile to use ROS on KDE Plasma Desktop container with NVIDIA GPU.  
 This Dockerfile is based on [selkies-project/docker-nvidia-egl-desktop](https://github.com/selkies-project/docker-nvidia-egl-desktop).
 
 ![](nvidia-egl-desktop-ros2-screenshot.png)
-
-If you are interested in ROS1 version, please check [atinfinity/nvidia-egl-desktop-ros](https://github.com/atinfinity/nvidia-egl-desktop-ros).
 
 ## Requirements
 
@@ -17,7 +15,7 @@ If you are interested in ROS1 version, please check [atinfinity/nvidia-egl-deskt
 ## Build docker image
 
 ```
-cd humble
+cd humble # or noetic
 ./launch_container.sh build
 ```
 
