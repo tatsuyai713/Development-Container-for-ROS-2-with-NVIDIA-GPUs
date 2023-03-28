@@ -1,5 +1,4 @@
-# nvidia-egl-desktop-ros2-humble
-
+# nvidia-egl-desktop-with-ros
 ## Introduction
 
 This is a Dockerfile to use ROS2 on KDE Plasma Desktop container with NVIDIA GPU.  
