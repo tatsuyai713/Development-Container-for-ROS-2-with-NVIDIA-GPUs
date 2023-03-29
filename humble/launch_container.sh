@@ -71,6 +71,12 @@ else
 			exit
 		fi
 	fi
+	if [ ! $# -ne 2 ]; then
+		if [ "build" = $1 ]; then
+			echo "Docker image is already built!"
+			exit
+		fi
+	fi
 fi
 
 
