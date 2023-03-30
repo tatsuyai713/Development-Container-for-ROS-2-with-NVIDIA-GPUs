@@ -60,7 +60,7 @@ RUN : "apt Proxy" \
 RUN echo "http_proxy=${HTTP_PROXY}" >> /etc/environment && \
     echo "https_proxy=${HTTPS_PROXY}" >> /etc/environment
     
-RG IN_LOCALE="JP"
+ARG IN_LOCALE="JP"
 ARG IN_TZ="Asia/Tokyo"
 ARG IN_LANG="ja_JP.UTF-8"
 ARG IN_LANGUAGE="ja_JP:ja"
@@ -508,15 +508,18 @@ ENV LANG ${IN_LANG}
 ENV LANGUAGE ${IN_LANGUAGE}
 
 
-# install ROS2 Humble
+# install ROS noetic
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
-RUN apt update && apt install -y --no-install-recommends \
-    ros-noetic-desktop 
 
-# install colcon and rosdep
-RUN apt update && apt install -y --no-install-recommends \
-    python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+          ros-noetic-desktop-full \
+          python3-rosdep \
+          python3-rosinstall \
+          python3-rosinstall-generator \
+          python3-wstool \
+          python3-vcstool
 
 # install Chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list

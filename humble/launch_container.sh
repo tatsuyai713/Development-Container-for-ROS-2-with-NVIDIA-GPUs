@@ -84,8 +84,8 @@ fi
 if [ ! $# -ne 1 ]; then
 	if [ "commit" = $1 ]; then
 		echo 'Now commiting docker container...'
-		docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_desktop_docker | awk '{print $1}')
+		docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
 		docker stop $CONTAINER_ID
 		docker rm $CONTAINER_ID -f
 		exit
@@ -96,7 +96,7 @@ fi
 if [ ! $# -ne 1 ]; then
 	if [ "stop" = $1 ]; then
 		echo 'Now stopping docker container...'
-		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_desktop_docker | awk '{print $1}')
+		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
 		docker stop $CONTAINER_ID
 		docker rm $CONTAINER_ID -f
 		exit
@@ -112,7 +112,7 @@ fi
 chmod a+r $XAUTH
 
 DOCKER_OPT=""
-DOCKER_NAME="nvidia_egl_desktop_docker"
+DOCKER_NAME="nvidia_egl_jammy_desktop_docker"
 DOCKER_WORK_DIR="/home/${USER}"
 KERNEL=$(uname -r)
 
@@ -134,7 +134,10 @@ DOCKER_OPT="${DOCKER_OPT} \
 		-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
         -w ${DOCKER_WORK_DIR} \
         -u ${USER} \
-		--shm-size=4096m -e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H}  -e NOVNC_ENABLE=true -p $(id -u):8080 \
+		--shm-size=4096m \
+		-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H}
+		-e NOVNC_ENABLE=true -e SSL_ENABLE=true -e CERT_PATH="/home/$USER/" \
+		-p $(id -u):8080 \
         --hostname `hostname`-Docker \
         --add-host `hostname`-Docker:127.0.1.1"
 		
@@ -165,7 +168,7 @@ if [ ! "$CONTAINER_ID" ]; then
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
 			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
@@ -183,7 +186,7 @@ if [ ! "$CONTAINER_ID" ]; then
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
 			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
@@ -202,7 +205,7 @@ else
 	if [ ! $# -ne 1 ]; then
 		if [ "setup" = $1 ]; then
 			echo 'Now commiting docker container...'
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 			InputVNCPassword
@@ -212,7 +215,7 @@ else
 				-it --entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
 			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
