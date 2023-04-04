@@ -136,7 +136,7 @@ DOCKER_OPT="${DOCKER_OPT} \
         -u ${USER} \
 		--shm-size=4096m \
 		-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H}
-		-e NOVNC_ENABLE=true -e SSL_ENABLE=true -e CERT_PATH="/home/$USER/" \
+		-e NOVNC_ENABLE=true -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
 		-p $(id -u):8080 \
         --hostname `hostname`-Docker \
         --add-host `hostname`-Docker:127.0.1.1"
