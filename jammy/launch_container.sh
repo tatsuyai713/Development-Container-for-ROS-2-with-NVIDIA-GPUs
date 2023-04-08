@@ -118,24 +118,22 @@ KERNEL=$(uname -r)
 
 ## For XWindow
 DOCKER_OPT="${DOCKER_OPT} \
-        --env=QT_X11_NO_MITSHM=1 \
         --volume=/home/${USER}:/home/${USER}/host_home:rw \
         --volume=/lib/modules/$(uname -r):/lib/modules/$(uname -r):rw \
         --volume=/usr/src/linux-headers-$(uname -r):/usr/src/linux-headers-$(uname -r):rw \
         --volume=/usr/src/linux-hwe-${KERNEL:0:4}-headers-${KERNEL:0:9}:/usr/src/linux-hwe-${KERNEL:0:4}-headers-${KERNEL:0:9}:rw \
         --env=XAUTHORITY=${XAUTH} \
 		--env=TERM=xterm-256color \
-		--env=QT_X11_NO_MITSHM=1 \
+        --env=QT_X11_NO_MITSHM=1 \
+		--tmpfs /dev/shm:rw \
+		--shm-size=4096m \
         --volume=${XAUTH}:${XAUTH} \
         --env=DISPLAY=${DISPLAY} \
-		-e PULSE_COOKIE=/tmp/pulse/cookie \
-		-e PULSE_SERVER=unix:/tmp/pulse/native \
-		-v /run/user/1000/pulse/native:/tmp/pulse/native \
-		-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
         -w ${DOCKER_WORK_DIR} \
         -u ${USER} \
-		--shm-size=4096m \
-		-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H}
+		-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H} \
+		-e WEBRTC_ENCODER=nvh264enc \
+		-e REFRESH=60 -e DPI=96 -e CDEPTH=24 \
 		-e NOVNC_ENABLE=true -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
 		-p $(id -u):8080 \
         --hostname `hostname`-Docker \
