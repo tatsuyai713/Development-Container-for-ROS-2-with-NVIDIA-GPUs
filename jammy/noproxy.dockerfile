@@ -242,6 +242,11 @@ ENV XDG_CURRENT_DESKTOP KDE
 ENV KWIN_COMPOSE N
 # Use sudoedit to change protected files instead of using sudo on kate
 ENV SUDO_EDITOR kate
+RUN mkdir -pm755 /etc/apt/preferences.d && \
+    echo "Package: firefox*\n\
+Pin: release o=Ubuntu*\n\
+Pin-Priority: -1" > /etc/apt/preferences.d/firefox-ppa && \
+    add-apt-repository -y ppa:mozillateam/ppa
 RUN apt update && apt install --no-install-recommends -y \
     kde-plasma-desktop \
     kwin-addons \
@@ -302,6 +307,7 @@ RUN apt update && apt install --no-install-recommends -y \
     xdg-desktop-portal-kde \
     kubuntu-restricted-extras \
     kubuntu-wallpapers \
+    firefox \
     pavucontrol-qt \
     transmission-qt \
     libreoffice \
@@ -518,7 +524,7 @@ RUN apt update && apt install -y --no-install-recommends nodejs
 USER $USERNAME
 
 # disabled beep sound
-RUN echo "set bell-style none" >> ~/.inputrc
+# RUN echo "set bell-style none" >> ~/.inputrc
 
 RUN mkdir /home/${USERNAME}/Desktop
 RUN touch /home/${USERNAME}/Desktop/home.desktop
