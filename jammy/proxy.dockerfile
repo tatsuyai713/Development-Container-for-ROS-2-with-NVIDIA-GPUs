@@ -40,7 +40,7 @@ ENV ENABLE_AUDIO true
 ENV ENABLE_BASIC_AUTH true
 
 # Set versions for components that should be manually checked before upgrading, other component versions are automatically determined by fetching the version online
-ARG VIRTUALGL_VERSION=3.0.2
+ARG VIRTUALGL_VERSION=3.1
 ARG NOVNC_VERSION=1.3.0
 
 ARG HTTP_PROXY
@@ -259,11 +259,6 @@ ENV XDG_CURRENT_DESKTOP KDE
 ENV KWIN_COMPOSE N
 # Use sudoedit to change protected files instead of using sudo on kate
 ENV SUDO_EDITOR kate
-RUN mkdir -pm755 /etc/apt/preferences.d && \
-    echo "Package: firefox*\n\
-Pin: release o=Ubuntu*\n\
-Pin-Priority: -1" > /etc/apt/preferences.d/firefox-ppa && \
-    add-apt-repository -y ppa:mozillateam/ppa
 RUN apt update && apt install --no-install-recommends -y \
     kde-plasma-desktop \
     kwin-addons \
@@ -324,7 +319,6 @@ RUN apt update && apt install --no-install-recommends -y \
     xdg-desktop-portal-kde \
     kubuntu-restricted-extras \
     kubuntu-wallpapers \
-    firefox \
     pavucontrol-qt \
     transmission-qt \
     libreoffice \
@@ -334,6 +328,21 @@ RUN apt update && apt install --no-install-recommends -y \
     rm -f /usr/lib/x86_64-linux-gnu/libexec/kf5/start_kdeinit && \
     cp -r /tmp/start_kdeinit /usr/lib/x86_64-linux-gnu/libexec/kf5/start_kdeinit && \
     rm -f /tmp/start_kdeinit
+
+RUN add-apt-repository ppa:mozillateam/ppa
+
+RUN { \
+      echo 'Package: firefox*'; \
+      echo 'Pin: release o=LP-PPA-mozillateam'; \
+      echo 'Pin-Priority: 1001'; \
+      echo ' '; \
+      echo 'Package: firefox*'; \
+      echo 'Pin: release o=Ubuntu*'; \
+      echo 'Pin-Priority: -1'; \
+    } > /etc/apt/preferences.d/99mozilla-firefox
+
+RUN apt -y update \
+ && apt install -y firefox
 
 # Wine, Winetricks, Lutris, and PlayOnLinux, this process must be consistent with https://wiki.winehq.org/Ubuntu
 ARG WINE_BRANCH=staging
