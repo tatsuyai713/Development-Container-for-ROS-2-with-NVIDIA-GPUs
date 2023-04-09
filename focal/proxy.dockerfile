@@ -328,6 +328,21 @@ RUN apt update && apt install --no-install-recommends -y \
     cp -r /tmp/start_kdeinit /usr/lib/x86_64-linux-gnu/libexec/kf5/start_kdeinit && \
     rm -f /tmp/start_kdeinit
 
+RUN add-apt-repository ppa:mozillateam/ppa
+
+RUN { \
+      echo 'Package: firefox*'; \
+      echo 'Pin: release o=LP-PPA-mozillateam'; \
+      echo 'Pin-Priority: 1001'; \
+      echo ' '; \
+      echo 'Package: firefox*'; \
+      echo 'Pin: release o=Ubuntu*'; \
+      echo 'Pin-Priority: -1'; \
+    } > /etc/apt/preferences.d/99mozilla-firefox
+
+RUN apt -y update \
+ && apt install -y firefox
+
 # Wine, Winetricks, Lutris, and PlayOnLinux, this process must be consistent with https://wiki.winehq.org/Ubuntu
 ARG WINE_BRANCH=staging
 RUN if [ "${UBUNTU_RELEASE}" \< "20.04" ]; then add-apt-repository -y ppa:cybermax-dexter/sdl2-backport; fi && \
@@ -570,6 +585,8 @@ RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 
 
 USER root
+
+RUN usermod -a -G adm,audio,cdrom,dialout,dip,fax,floppy,input,lp,lpadmin,plugdev,pulse-access,scanner,sudo,tape,tty,video,voice $USERNAME
 
 # Copy scripts and configurations used to start the container
 COPY entrypoint.sh /etc/entrypoint.sh

@@ -550,7 +550,7 @@ RUN apt update && apt install -y --no-install-recommends nodejs
 USER $USERNAME
 
 # disabled beep sound
-# RUN echo "set bell-style none" >> ~/.inputrc
+RUN echo "set bell-style none" >> ~/.inputrc
 
 RUN mkdir /home/${USERNAME}/Desktop
 RUN touch /home/${USERNAME}/Desktop/home.desktop
@@ -586,6 +586,8 @@ RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
 
 
 USER root
+
+RUN usermod -a -G adm,audio,cdrom,dialout,dip,fax,floppy,input,lp,lpadmin,plugdev,pulse-access,scanner,sudo,tape,tty,video,voice $USERNAME
 
 # Copy scripts and configurations used to start the container
 COPY entrypoint.sh /etc/entrypoint.sh

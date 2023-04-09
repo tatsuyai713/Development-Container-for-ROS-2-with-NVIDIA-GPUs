@@ -533,7 +533,7 @@ RUN apt update && apt install -y --no-install-recommends nodejs
 USER $USERNAME
 
 # disabled beep sound
-# RUN echo "set bell-style none" >> ~/.inputrc
+RUN echo "set bell-style none" >> ~/.inputrc
 
 RUN mkdir /home/${USERNAME}/Desktop
 RUN touch /home/${USERNAME}/Desktop/home.desktop
