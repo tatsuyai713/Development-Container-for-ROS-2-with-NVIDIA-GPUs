@@ -583,6 +583,7 @@ RUN sudo rosdep init && \
 
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 
+RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 
 USER root
 
