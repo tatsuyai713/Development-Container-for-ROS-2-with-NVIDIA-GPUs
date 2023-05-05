@@ -567,6 +567,7 @@ RUN sudo rosdep init && \
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
     echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
+RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 
 USER root
 
