@@ -501,20 +501,6 @@ RUN if [ "${IN_LOCALE}" = "JP" ]; then \
     ; \
     fi
 
-RUN if [ "${IN_LOCALE}" = "JP" ]; then \
-    { \
-    echo 'XDG_DESKTOP_DIR="$HOME/Desktop"'; \
-    echo 'XDG_DOWNLOAD_DIR="$HOME/Downloads"'; \
-    echo 'XDG_TEMPLATES_DIR="$HOME/Templates"'; \
-    echo 'XDG_PUBLICSHARE_DIR="$HOME/Public"'; \
-    echo 'XDG_DOCUMENTS_DIR="$HOME/Documents"'; \
-    echo 'XDG_MUSIC_DIR="$HOME/Music"'; \
-    echo 'XDG_PICTURES_DIR="$HOME/Pictures"'; \
-    echo 'XDG_VIDEOS_DIR="$HOME/Videos"'; \
-    } > /home/${USERNAME}/.config/user-dirs.dirs \
-    ; \
-    fi
-
 ENV TZ ${IN_TZ}
 ENV LANG ${IN_LANG}
 ENV LANGUAGE ${IN_LANGUAGE}
@@ -545,6 +531,21 @@ RUN apt update && apt install -y --no-install-recommends nodejs
 
 USER $USERNAME
 
+RUN touch /home/${USERNAME}/.config/user-dirs.dirs
+RUN if [ "${IN_LOCALE}" = "JP" ]; then \
+    { \
+    echo 'XDG_DESKTOP_DIR="$HOME/Desktop"'; \
+    echo 'XDG_DOWNLOAD_DIR="$HOME/Downloads"'; \
+    echo 'XDG_TEMPLATES_DIR="$HOME/Templates"'; \
+    echo 'XDG_PUBLICSHARE_DIR="$HOME/Public"'; \
+    echo 'XDG_DOCUMENTS_DIR="$HOME/Documents"'; \
+    echo 'XDG_MUSIC_DIR="$HOME/Music"'; \
+    echo 'XDG_PICTURES_DIR="$HOME/Pictures"'; \
+    echo 'XDG_VIDEOS_DIR="$HOME/Videos"'; \
+    } > /home/${USERNAME}/.config/user-dirs.dirs \
+    ; \
+    fi
+    
 # disabled beep sound
 RUN echo "set bell-style none" >> ~/.inputrc
 
