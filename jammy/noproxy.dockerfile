@@ -551,6 +551,7 @@ RUN mkdir /home/${USERNAME}/Templates/
 RUN mkdir /home/${USERNAME}/Public/
 RUN mkdir /home/${USERNAME}/Documents/
 RUN mkdir /home/${USERNAME}/Music/
+RUN mkdir /home/${USERNAME}/Pictures/
 RUN mkdir /home/${USERNAME}/Videos/
 
 # disabled beep sound
