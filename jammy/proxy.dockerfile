@@ -573,7 +573,6 @@ RUN mkdir /home/${USERNAME}/Videos/
 # disabled beep sound
 RUN echo "set bell-style none" >> ~/.inputrc
 
-RUN mkdir /home/${USERNAME}/Desktop
 RUN touch /home/${USERNAME}/Desktop/home.desktop
 RUN touch /home/${USERNAME}/Desktop/trash.desktop
 
