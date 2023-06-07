@@ -547,7 +547,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt update && apt install -y --no-install-recommends nodejs
 
 USER $USERNAME
-
+RUN mkdir /home/${USERNAME}/.config/
 RUN touch /home/${USERNAME}/.config/user-dirs.dirs
 RUN if [ "${IN_LOCALE}" = "JP" ]; then \
     { \
