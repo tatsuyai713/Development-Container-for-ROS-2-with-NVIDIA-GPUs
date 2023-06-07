@@ -562,7 +562,14 @@ RUN if [ "${IN_LOCALE}" = "JP" ]; then \
     } > /home/${USERNAME}/.config/user-dirs.dirs \
     ; \
     fi
-    
+RUN mkdir /home/${USERNAME}/Desktop/
+RUN mkdir /home/${USERNAME}/Downloads/
+RUN mkdir /home/${USERNAME}/Templates/
+RUN mkdir /home/${USERNAME}/Public/
+RUN mkdir /home/${USERNAME}/Documents/
+RUN mkdir /home/${USERNAME}/Music/
+RUN mkdir /home/${USERNAME}/Videos/
+
 # disabled beep sound
 RUN echo "set bell-style none" >> ~/.inputrc
 
