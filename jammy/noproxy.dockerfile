@@ -414,11 +414,10 @@ RUN apt update && apt install --no-install-recommends -y \
     # Build the latest x11vnc source to avoid various errors
     git clone "https://github.com/LibVNC/x11vnc.git" /tmp/x11vnc && \
     cd /tmp/x11vnc && autoreconf -fi && ./configure && make install && cd / && rm -rf /tmp/* && \
-    curl -fsSL "https://github.com/novnc/noVNC/archive/v${NOVNC_VERSION}.tar.gz" | tar -xzf - -C /opt && \
-    mv -f "/opt/noVNC-${NOVNC_VERSION}" /opt/noVNC && \
+    git clone https://github.com/tatsuyai713/noVNC.git -b add_clipboard_support /opt/noVNC && \
     ln -snf /opt/noVNC/vnc.html /opt/noVNC/index.html && \
     # Use the latest Websockify source to expose noVNC
-    git clone "https://github.com/novnc/websockify.git" /opt/noVNC/utils/websockify
+    pip3 install git+https://github.com/novnc/websockify.git@v0.10.0
 
 # install package
 RUN apt update && apt install -y --no-install-recommends \
