@@ -105,6 +105,18 @@ if [ ! $# -ne 1 ]; then
 	fi
 fi
 
+# Delete
+if [ ! $# -ne 1 ]; then
+	if [ "stop" = $1 ]; then
+		echo 'Now stopping docker container...'
+		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
+		docker stop $CONTAINER_ID
+		docker rm $CONTAINER_ID -f
+		docker image rm nvidia_egl_jammy_desktop_ws
+		exit
+	fi
+fi
+
 XAUTH=/tmp/.docker.xauth
 touch $XAUTH
 xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
