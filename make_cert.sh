@@ -14,3 +14,6 @@ openssl req -new -key privkey_withpasswd.key -out server.csr
 openssl rsa -in privkey_withpasswd.key -out server.key
 
 openssl x509 -req -in server.csr -CA cacert.pem -CAkey privkey_cert.key -CAcreateserial -extfile ../subjectnames.txt -days 730 -out server.crt
+
+cd ..
+mv -f ./ssl ~/
