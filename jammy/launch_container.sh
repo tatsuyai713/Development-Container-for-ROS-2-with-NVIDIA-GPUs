@@ -162,7 +162,7 @@ if [ ! "$CONTAINER_ID" ]; then
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-it -e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				-e NOVNC_ENABLE=false -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
+				-e NOVNC_ENABLE=false -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				--network host \
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
@@ -179,7 +179,7 @@ if [ ! "$CONTAINER_ID" ]; then
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/1000/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e NOVNC_ENABLE=true -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
+				-e NOVNC_ENABLE=true -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				-p $(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
@@ -197,7 +197,7 @@ if [ ! "$CONTAINER_ID" ]; then
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				-e NOVNC_ENABLE=false -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
+				-e NOVNC_ENABLE=false -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				--network host \
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
@@ -214,7 +214,7 @@ if [ ! "$CONTAINER_ID" ]; then
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/1000/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e NOVNC_ENABLE=true -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
+				-e NOVNC_ENABLE=true -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				-p $(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
@@ -243,7 +243,7 @@ else
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				-e NOVNC_ENABLE=false -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
+				-e NOVNC_ENABLE=false -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				--network host \
 				-it --entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
@@ -264,7 +264,7 @@ else
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/1000/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e NOVNC_ENABLE=true -e SSL_ENABLE=false -e CERT_PATH="/home/$USER/" \
+				-e NOVNC_ENABLE=true -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				-p $(id -u):8080 \
 				-it --entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
