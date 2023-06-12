@@ -107,8 +107,8 @@ fi
 
 # Delete
 if [ ! $# -ne 1 ]; then
-	if [ "stop" = $1 ]; then
-		echo 'Now stopping docker container...'
+	if [ "delete" = $1 ]; then
+		echo 'Now deleting docker container...'
 		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
 		docker stop $CONTAINER_ID
 		docker rm $CONTAINER_ID -f
