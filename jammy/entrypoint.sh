@@ -31,7 +31,7 @@ sudo service ssh start
 
 # Default display is :0 across the container
 export DISPLAY=":10"
-sudo rm -rf /tmp/.X11-unix/X${DISPLAY/
+sudo rm -rf /tmp/.X11-unix/X${DISPLAY/:/}
 
 # Run Xvfb server with required extensions
 Xvfb "${DISPLAY}" -ac -screen "0" "${SIZEW}x${SIZEH}x${CDEPTH}" -dpi "${DPI}" +extension "RANDR" +extension "GLX" +iglx +extension "MIT-SHM" +render -nolisten "tcp" -noreset -shmem &
