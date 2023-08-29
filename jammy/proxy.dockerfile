@@ -104,6 +104,7 @@ RUN dpkg --add-architecture i386 && \
     python3 \
     python3-cups \
     python3-numpy \
+    python3-pip3 \
     mlocate \
     nano \
     vim \
