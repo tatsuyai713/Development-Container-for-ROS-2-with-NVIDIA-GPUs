@@ -33,11 +33,7 @@ ENV DPI 96
 ENV CDEPTH 24
 ENV VGL_DISPLAY egl
 ENV PASSWD mypasswd
-ENV NOVNC_ENABLE false
-ENV WEBRTC_ENCODER nvh264enc
-ENV WEBRTC_ENABLE_RESIZE false
-ENV ENABLE_AUDIO true
-ENV ENABLE_BASIC_AUTH true
+ENV NOVNC_ENABLE true
 
 # Set versions for components that should be manually checked before upgrading, other component versions are automatically determined by fetching the version online
 ARG VIRTUALGL_VERSION=3.1
@@ -321,50 +317,6 @@ RUN if [ "${UBUNTU_RELEASE}" \< "20.04" ]; then add-apt-repository -y ppa:cyberm
     chmod 755 /usr/bin/winetricks && \
     curl -fsSL -o /usr/share/bash-completion/completions/winetricks "https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion"
 
-# Install latest selkies-gstreamer (https://github.com/selkies-project/selkies-gstreamer) build, Python application, and web application, should be consistent with selkies-gstreamer documentation
-RUN apt-get update && apt-get install --no-install-recommends -y \
-        build-essential \
-        python3-pip \
-        python3-dev \
-        python3-gi \
-        python3-setuptools \
-        python3-wheel \
-        tzdata \
-        sudo \
-        udev \
-        xclip \
-        x11-utils \
-        xdotool \
-        wmctrl \
-        jq \
-        gdebi-core \
-        x11-xserver-utils \
-        xserver-xorg-core \
-        libopus0 \
-        libgdk-pixbuf2.0-0 \
-        libsrtp2-1 \
-        libxdamage1 \
-        libxml2-dev \
-        libwebrtc-audio-processing1 \
-        libcairo-gobject2 \
-        pulseaudio \
-        libpulse0 \
-        libpangocairo-1.0-0 \
-        libgirepository1.0-dev \
-        libjpeg-dev \
-        libvpx-dev \
-        zlib1g-dev \
-        x264 && \
-    if [ "${UBUNTU_RELEASE}" \> "20.04" ]; then apt-get install --no-install-recommends -y xcvt; fi && \
-    rm -rf /var/lib/apt/lists/* && \
-    cd /opt && \
-    # Automatically fetch the latest selkies-gstreamer version and install the components
-    SELKIES_VERSION=$(curl -fsSL "https://api.github.com/repos/selkies-project/selkies-gstreamer/releases/latest" | jq -r '.tag_name' | sed 's/[^0-9\.\-]*//g') && \
-    curl -fsSL "https://github.com/selkies-project/selkies-gstreamer/releases/download/v${SELKIES_VERSION}/selkies-gstreamer-v${SELKIES_VERSION}-ubuntu${UBUNTU_RELEASE}.tgz" | tar -zxf - && \
-    curl -O -fsSL "https://github.com/selkies-project/selkies-gstreamer/releases/download/v${SELKIES_VERSION}/selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" && pip3 install "selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" && rm -f "selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" && \
-    curl -fsSL "https://github.com/selkies-project/selkies-gstreamer/releases/download/v${SELKIES_VERSION}/selkies-gstreamer-web-v${SELKIES_VERSION}.tgz" | tar -zxf - && \
-    cd /usr/local/cuda/lib64 && sudo find . -maxdepth 1 -type l -name "*libnvrtc.so.*" -exec sh -c 'ln -snf $(basename {}) libnvrtc.so' \;
-
 # Install the noVNC web interface and the latest x11vnc for fallback
 RUN apt-get update && apt-get install --no-install-recommends -y \
         autoconf \
@@ -602,8 +554,6 @@ USER root
 # Copy scripts and configurations used to start the container
 COPY entrypoint.sh /etc/entrypoint.sh
 RUN chmod 755 /etc/entrypoint.sh
-COPY selkies-gstreamer-entrypoint.sh /etc/selkies-gstreamer-entrypoint.sh
-RUN chmod 755 /etc/selkies-gstreamer-entrypoint.sh
 COPY supervisord.conf /etc/supervisord.conf
 RUN chmod 755 /etc/supervisord.conf
 
@@ -619,8 +569,6 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN rm /etc/apt/apt.conf.d/docker-clean
-
-EXPOSE 8080
 
 USER $USERNAME
 ENV SHELL /bin/bash

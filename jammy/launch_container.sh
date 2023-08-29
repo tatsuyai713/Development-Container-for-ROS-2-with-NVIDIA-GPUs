@@ -169,20 +169,7 @@ CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws: | awk '{print $1
 # Run Container
 if [ ! "$CONTAINER_ID" ]; then
 	if [ ! $# -ne 1 ]; then
-		if [ "webrtc" = $1 ]; then
-			InputVNCPassword
-			docker run ${DOCKER_OPT} \
-				--name=${DOCKER_NAME} \
-				-it -e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				-e NOVNC_ENABLE=false -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				--network host \
-				--entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-			docker stop $CONTAINER_ID
-			docker rm $CONTAINER_ID -f
-		elif [ "novnc" = $1 ]; then
+		if [ "novnc" = $1 ]; then
 			InputVNCPassword
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
@@ -191,7 +178,7 @@ if [ ! "$CONTAINER_ID" ]; then
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/1000/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e NOVNC_ENABLE=true -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
+				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				-p $(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
@@ -204,20 +191,7 @@ if [ ! "$CONTAINER_ID" ]; then
 			exit
 		fi
 	elif [ ! $# -ne 2 ]; then
-		if [ "webrtc" = $1 ]; then
-			VNC_PASSWORD=$2
-			docker run ${DOCKER_OPT} \
-				--name=${DOCKER_NAME} \
-				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				-e NOVNC_ENABLE=false -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				--network host \
-				--entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-			docker stop $CONTAINER_ID
-			docker rm $CONTAINER_ID -f
-		elif [ "novnc" = $1 ]; then
+		if [ "novnc" = $1 ]; then
 			VNC_PASSWORD=$2
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
@@ -226,7 +200,7 @@ if [ ! "$CONTAINER_ID" ]; then
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/1000/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e NOVNC_ENABLE=true -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
+				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				-p $(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest
@@ -246,24 +220,7 @@ if [ ! "$CONTAINER_ID" ]; then
 	fi
 else
 	if [ ! $# -ne 1 ]; then
-		if [ "webrtc" = $1 ]; then
-			echo 'Now commiting docker container...'
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-			docker stop $CONTAINER_ID
-			docker rm $CONTAINER_ID -f
-			InputVNCPassword
-			docker run ${DOCKER_OPT} \
-				--name=${DOCKER_NAME} \
-				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				-e NOVNC_ENABLE=false -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				--network host \
-				-it --entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-			docker stop $CONTAINER_ID
-			docker rm $CONTAINER_ID -f
-		elif [ "novnc" = $1 ]; then
+		if [ "novnc" = $1 ]; then
 			echo 'Now commiting docker container...'
 			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
 			docker stop $CONTAINER_ID
@@ -276,7 +233,7 @@ else
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/1000/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e NOVNC_ENABLE=true -e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
+				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				-p $(id -u):8080 \
 				-it --entrypoint "/usr/bin/supervisord" \
 				nvidia_egl_jammy_desktop_ws:latest

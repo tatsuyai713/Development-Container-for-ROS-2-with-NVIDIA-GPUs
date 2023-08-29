@@ -25,8 +25,6 @@ export LD_LIBRARY_PATH="/usr/lib/libreoffice/program:${LD_LIBRARY_PATH}"
 
 # Start DBus without systemd
 sudo /etc/init.d/dbus start
-# Configure environment for selkies-gstreamer utilities
-source /opt/gstreamer/gst-env
 
 # SSH start
 sudo service ssh start
@@ -34,15 +32,12 @@ sudo service ssh start
 # Default display is :0 across the container
 export DISPLAY=":10"
 # Run Xvfb server with required extensions
-Xvfb "${DISPLAY}" -ac -screen "0" "8192x4096x${CDEPTH}" -dpi "${DPI}" +extension "RANDR" +extension "GLX" +iglx +extension "MIT-SHM" +render -nolisten "tcp" -noreset -shmem &
+Xvfb "${DISPLAY}" -ac -screen "0" "${SIZEW}x${SIZEH}x${CDEPTH}" -dpi "${DPI}" +extension "RANDR" +extension "GLX" +iglx +extension "MIT-SHM" +render -nolisten "tcp" -noreset -shmem &
 
 # Wait for X11 to start
 echo "Waiting for X socket"
 until [ -S "/tmp/.X11-unix/X${DISPLAY/:/}" ]; do sleep 1; done
 echo "X socket is ready"
-
-# Resize the screen to the provided size
-selkies-gstreamer-resize "${SIZEW}x${SIZEH}"
 
 if [ "${SSL_ENABLE,,}" = "true" ]; then
   SSL="--ssl-only"
@@ -50,11 +45,9 @@ if [ "${SSL_ENABLE,,}" = "true" ]; then
 fi
 
 # Run the x11vnc + noVNC fallback web interface if enabled
-if [ "${NOVNC_ENABLE,,}" = "true" ]; then
-  if [ -n "$NOVNC_VIEWPASS" ]; then export NOVNC_VIEWONLY="-viewpasswd ${NOVNC_VIEWPASS}"; else unset NOVNC_VIEWONLY; fi
-  x11vnc -display "${DISPLAY}" -passwd "${BASIC_AUTH_PASSWORD:-$PASSWD}" -shared -forever -repeat -xkb -snapfb -threads -xrandr "resize" -rfbport 5900 ${NOVNC_VIEWONLY} &
-  /opt/noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 8080 --heartbeat 10 $SSL $CERT &
-fi
+if [ -n "$NOVNC_VIEWPASS" ]; then export NOVNC_VIEWONLY="-viewpasswd ${NOVNC_VIEWPASS}"; else unset NOVNC_VIEWONLY; fi
+x11vnc -display "${DISPLAY}" -passwd "${BASIC_AUTH_PASSWORD:-$PASSWD}" -shared -forever -repeat -xkb -snapfb -threads -xrandr "resize" -rfbport 5900 ${NOVNC_VIEWONLY} &
+/opt/noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 8080 --heartbeat 10 $SSL $CERT &
 
 # Choose startplasma-x11 or startkde for KDE startup
 if [ -x "$(command -v startplasma-x11)" ]; then export KDE_START="startplasma-x11"; else export KDE_START="startkde"; fi

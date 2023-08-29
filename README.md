@@ -12,19 +12,22 @@ This Dockerfile is based on [selkies-project/docker-nvidia-egl-desktop](https://
 - Docker
 - nvidia-docker2
 
-## Build docker image
+## Build Japanese docker image
 
 ```
-cd jammy # or focal
-./launch_container.sh build
+cd jammy
+./launch_container.sh build JP # Support Japanese
+```
+## Build US docker image
+
+```
+cd jammy
+./launch_container.sh build US
 ```
 
-
-## Launch docker container
+## Launch docker container with novnc (Web Browser)
 
 Execute the command described below.  
-If you customize setting, please read <https://github.com/selkies-project/docker-nvidia-egl-desktop/blob/main/README.md>.
-
 ```
 ./launch_container.sh novnc
 ```
@@ -35,3 +38,11 @@ Browse <http://127.0.0.1:uid/>.
 In this docker container, default account is `your login user name`.  
 
 [^1]: <https://github.com/selkies-project/docker-nvidia-egl-desktop/blob/main/README.md>
+
+
+## Launch docker container with bash
+
+Execute the command described below.  
+```
+./launch_container.sh
+```
