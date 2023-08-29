@@ -133,6 +133,7 @@ KERNEL=$(uname -r)
 ## For XWindow
 DOCKER_OPT="${DOCKER_OPT} \
 	--env=QT_X11_NO_MITSHM=1 \
+    --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
 	--volume=/home/${USER}:/home/${USER}/host_home:rw \
 	--volume=/lib/modules/$(uname -r):/lib/modules/$(uname -r):rw \
 	--volume=/usr/src/linux-headers-$(uname -r):/usr/src/linux-headers-$(uname -r):rw \
