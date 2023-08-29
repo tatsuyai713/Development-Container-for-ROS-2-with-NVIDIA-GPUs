@@ -30,7 +30,7 @@ sudo /etc/init.d/dbus start
 sudo service ssh start
 
 # Default display is :0 across the container
-export DISPLAY=":100"
+export DISPLAY=":10"
 sudo rm -rf /tmp/.X11-unix/X${DISPLAY/
 
 # Run Xvfb server with required extensions
