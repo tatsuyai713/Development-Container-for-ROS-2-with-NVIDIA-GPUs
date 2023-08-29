@@ -15,7 +15,7 @@ sudo chown <user>:<user> /home/<user>
 # Change operating system password to environment variable
 echo "<user>:$PASSWD" | sudo chpasswd
 # Remove directories to make sure the desktop environment starts
-sudo rm -rf /tmp/.X* ~/.cache
+sudo rm -rf ~/.cache
 # Change time zone from environment variable
 sudo ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" | sudo tee /etc/timezone > /dev/null
 # Add game directories for Lutris and VirtualGL directories to path
@@ -32,7 +32,7 @@ source /opt/gstreamer/gst-env
 sudo service ssh start
 
 # Default display is :0 across the container
-export DISPLAY=":0"
+export DISPLAY=":10"
 # Run Xvfb server with required extensions
 Xvfb "${DISPLAY}" -ac -screen "0" "8192x4096x${CDEPTH}" -dpi "${DPI}" +extension "RANDR" +extension "GLX" +iglx +extension "MIT-SHM" +render -nolisten "tcp" -noreset -shmem &
 
