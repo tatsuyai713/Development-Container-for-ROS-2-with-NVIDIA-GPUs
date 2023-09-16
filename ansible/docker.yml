@@ -1,0 +1,7 @@
+---
+- hosts: all
+  gather_facts: true
+  become: no
+  roles:
+    - { role: common, tags: ["Common"] }
+    - { role: nvidia-machine-learning, tags: ["NVIDIA Machine Learning"] }

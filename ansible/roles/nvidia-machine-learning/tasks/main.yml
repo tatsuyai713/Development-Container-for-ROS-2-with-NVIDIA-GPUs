@@ -1,0 +1,97 @@
+---
+- name: Install NVIDIA CUDA repos
+  apt:
+    deb: "{{ item }}"
+  with_items:
+    -  https://developer.download.nvidia.com/compute/cuda/repos/ubuntu{{ansible_distribution_major_version}}04/x86_64/cuda-keyring_1.1-1_all.deb
+  become: yes
+
+- name: ADD CUDA Reposiotory Pin
+  ansible.builtin.get_url:
+    url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu{{ansible_distribution_major_version}}04/x86_64/cuda-ubuntu{{ansible_distribution_major_version}}04.pin
+    dest: /etc/apt/preferences.d/cuda-repository-pin-600
+  become: yes
+
+- name: Add NVIDIA key
+  apt_key:
+    url: http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+  become: yes
+
+- name: Add NVIDIA key
+  apt_key:
+    url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu{{ansible_distribution_major_version}}04/x86_64/3bf863cc.pub
+  become: yes
+
+- name: Delete NVIDIA old repo file
+  file:
+      path: /etc/apt/sources.list.d/cuda.list
+      state: absent
+  become: yes
+
+- name: Add NVIDIA CUDA repo
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu{{ansible_distribution_major_version}}04/x86_64/ /"
+    filename: cuda-ubuntu{{ansible_distribution_major_version}}04-x86_64
+    state: present
+  become: yes
+
+- name: Install NVIDIA repos
+  apt:
+    deb: "{{ item }}"
+  with_items:
+    - http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/nvidia-machine-learning-repo-ubuntu2004_1.0.0-1_amd64.deb
+  become: yes
+
+- name: Delete NVIDIA old repo file
+  file:
+      path: /etc/apt/sources.list.d/nvidia-machine-learning.list
+      state: absent
+  become: yes
+
+- name: Add NVIDIA Machine Learning repo key
+  ansible.builtin.get_url:
+    url: http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/7fa2af80.pub
+    dest: /usr/share/keyrings/nvidia-machine-learning-keyring.asc
+  become: yes
+
+- name: Add NVIDIA Machine Learning repo
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/nvidia-machine-learning-keyring.asc] http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/ /"
+    filename: nvidia-machine-learning
+    state: present
+  become: yes
+
+- name: Install CUDA
+  apt: 
+    name: 
+     - cuda-toolkit-{{nvidia_cuda_version}}
+    update_cache: yes
+  become: yes
+
+- name: Install NVIDIA Machine Learning Packages
+  apt:
+    name: 
+    - libcudnn8=8.5.0.96-1+cuda11.7
+    - libcudnn8-dev=8.5.0.96-1+cuda11.7
+    - libnvinfer8=8.5.3-1+cuda11.8
+    - libnvinfer-bin=8.5.3-1+cuda11.8
+    - libnvinfer-dev=8.5.3-1+cuda11.8
+    - libnvinfer-plugin8=8.5.3-1+cuda11.8
+    - libnvinfer-plugin-dev=8.5.3-1+cuda11.8
+    - libnvinfer-samples=8.5.3-1+cuda11.8
+    - python3-libnvinfer=8.5.3-1+cuda11.8
+    - python3-libnvinfer-dev=8.5.3-1+cuda11.8
+    - libnvonnxparsers8=8.5.3-1+cuda11.8
+    - libnvonnxparsers-dev=8.5.3-1+cuda11.8
+    - libnvparsers-dev=8.5.3-1+cuda11.8
+    - libnvparsers8=8.5.3-1+cuda11.8
+    - tensorrt=8.5.3.1-1+cuda11.8
+    - tensorrt-dev=8.5.3.1-1+cuda11.8
+    update_cache: yes
+  become: yes
+
+
+- name: Hold NVIDIA Machine Learning Packages Version
+  shell: "apt-mark hold libcudnn8* libnvinfer* python3-libnvinfer* libnvonnxparsers* libnvparsers* tensorrt*"
+  changed_when: false
+  become: yes

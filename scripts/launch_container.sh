@@ -27,6 +27,7 @@ NAME_IMAGE='nvidia_egl_jammy_desktop_ws'
 if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 	if [ ! $# -ne 1 ]; then
 		if [ "build" = $1 ]; then
+			docker network create --subnet=172.16.0.0/16 custom-net
 			if [ "$http_proxy" ]; then
 				echo "Image ${NAME_IMAGE} does not exist."
 				echo 'Now building JP image with proxy...'
@@ -40,6 +41,7 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 		fi
 	elif [ ! $# -ne 2 ]; then
 		if [ "build" = $1 ]; then
+			docker network create --subnet=172.16.0.0/16 custom-net
 			if [ "US" = $2 ]; then
 				if [ "$http_proxy" ]; then
 					echo "Image ${NAME_IMAGE} does not exist."
@@ -148,6 +150,8 @@ DOCKER_OPT="${DOCKER_OPT} \
 	-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H} -e REFRESH=60 -e DPI=96 -e CDEPTH=24 \
 	--tmpfs /dev/shm:rw -e WEBRTC_ENCODER=nvh264enc \
 	-e PULSE_SERVER=unix:/run/pulse/native \
+	--net=custom-net \
+	--ip=172.16.0.2 \
 	--hostname $(hostname)-Docker \
 	--add-host $(hostname)-Docker:127.0.1.1"
 

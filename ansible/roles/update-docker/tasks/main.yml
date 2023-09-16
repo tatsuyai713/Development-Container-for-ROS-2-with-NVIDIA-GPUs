@@ -1,0 +1,81 @@
+---
+
+- name: Unhold NVIDIA Machine Learning Packages Version
+  shell: "apt-mark unhold cuda-* libcublas* libcudnn8* libnvinfer* python3-libnvinfer* libnvonnxparsers* libnvparsers* tensorrt*"
+  changed_when: false
+  become: yes
+
+- name: Uninstall NVIDIA Machine Learning Packages
+  apt:
+    name:
+      - cuda-*
+      - libcublas-*
+      - libcudnn8*
+      - libnvinfer*
+      - python3-libnvinfer*
+      - libnvonnxparsers*
+      - libnvparsers*
+      - tensorrt*
+    state: absent
+    purge: yes
+    autoremove: yes
+  become: yes
+
+- name: Install NVIDIA CUDA repos
+  apt:
+    deb: "{{ item }}"
+  with_items:
+    -  https://developer.download.nvidia.com/compute/cuda/repos/ubuntu{{ansible_distribution_major_version}}04/x86_64/cuda-keyring_1.1-1_all.deb
+  become: yes
+
+- name: Install NVIDIA repos
+  apt:
+    deb: "{{ item }}"
+  with_items:
+    - http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/nvidia-machine-learning-repo-ubuntu2004_1.0.0-1_amd64.deb
+  become: yes
+
+- name: Install CUDA
+  apt: 
+    name: 
+     - cuda-toolkit-{{nvidia_cuda_version}}
+    update_cache: yes
+  become: yes
+
+- name: Install NVIDIA Machine Learning Packages
+  apt:
+    name: 
+    - libcudnn8=8.9.2.26-1+cuda12.1
+    - libcudnn8-dev=8.9.2.26-1+cuda12.1
+    - libnvinfer8=8.6.1.6-1+cuda12.0
+    - libnvinfer-bin=8.6.1.6-1+cuda12.0
+    - libnvinfer-dev=8.6.1.6-1+cuda12.0
+    - libnvinfer-plugin8=8.6.1.6-1+cuda12.0
+    - libnvinfer-plugin-dev=8.6.1.6-1+cuda12.0
+    - libnvinfer-samples=8.6.1.6-1+cuda12.0
+    - python3-libnvinfer=8.6.1.6-1+cuda12.0
+    - python3-libnvinfer-dev=8.6.1.6-1+cuda12.0
+    - libnvonnxparsers8=8.6.1.6-1+cuda12.0
+    - libnvonnxparsers-dev=8.6.1.6-1+cuda12.0
+    - libnvparsers-dev=8.6.1.6-1+cuda12.0
+    - libnvparsers8=8.6.1.6-1+cuda12.0
+    - tensorrt=8.6.1.6-1+cuda12.0
+    - tensorrt-dev=8.6.1.6-1+cuda12.0
+    update_cache: yes
+  become: yes
+
+- name: Hold NVIDIA Machine Learning Packages Version
+  shell: "apt-mark hold cuda-* libcublas* libcudnn8* libnvinfer* python3-libnvinfer* libnvonnxparsers* libnvparsers* tensorrt*"
+  changed_when: false
+  become: yes
+
+- name: Unhold NVIDIA CUDA Keyring
+  shell: "apt-mark unhold cuda-keyring"
+  changed_when: false
+  become: yes
+
+  #- name: Remove Unused Libraries
+  #  shell: "find /lib/ -name '*.515.105.01' | xargs rm -rf"
+  #  changed_when: false
+  #  become: yes
+  
