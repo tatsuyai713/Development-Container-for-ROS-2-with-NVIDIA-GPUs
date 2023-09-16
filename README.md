@@ -15,21 +15,19 @@ This Dockerfile is based on [selkies-project/docker-nvidia-egl-desktop](https://
 ## Build Japanese docker image
 
 ```
-cd jammy
-./launch_container.sh build JP # Support Japanese
+./build_container.sh JP # Support Japanese
 ```
 ## Build US docker image
 
 ```
-cd jammy
-./launch_container.sh build US
+./build_container.sh US
 ```
 
 ## Launch docker container with novnc (Web Browser)
 
 Execute the command described below.  
 ```
-./launch_container.sh novnc
+./start_container.sh
 ```
 
 ### Access KDE Plasma Desktop via web browser
@@ -40,9 +38,9 @@ In this docker container, default account is `your login user name`.
 [^1]: <https://github.com/selkies-project/docker-nvidia-egl-desktop/blob/main/README.md>
 
 
-## Launch docker container with bash
+## attach docker container using bash
 
 Execute the command described below.  
 ```
-./launch_container.sh
+./attach_container.sh
 ```
