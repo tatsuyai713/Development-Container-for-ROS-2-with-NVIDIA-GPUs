@@ -23,7 +23,6 @@ With Japanese Keyboard
 With English Keyboard
 ```
 ./build_container US
-
 ```
 
 3. Start/Stop Container
