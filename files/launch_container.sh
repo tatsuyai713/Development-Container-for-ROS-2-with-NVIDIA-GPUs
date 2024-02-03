@@ -21,13 +21,13 @@ sudo service docker start
 
 sleep 3
 
-NAME_IMAGE='nvidia_egl_jammy_desktop_ws'
+NAME_IMAGE="devcontainer_nvidia_image_for_${USER}"
+DOCKER_NAME="devcontainer_nvidia_for_${USER}"
 
 # Make Container
 if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 	if [ ! $# -ne 1 ]; then
 		if [ "build" = $1 ]; then
-			docker network create --subnet=172.16.0.0/16 custom-net
 			if [ "$http_proxy" ]; then
 				echo "Image ${NAME_IMAGE} does not exist."
 				echo 'Now building JP image with proxy...'
@@ -41,7 +41,6 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 		fi
 	elif [ ! $# -ne 2 ]; then
 		if [ "build" = $1 ]; then
-			docker network create --subnet=172.16.0.0/16 custom-net
 			if [ "US" = $2 ]; then
 				if [ "$http_proxy" ]; then
 					echo "Image ${NAME_IMAGE} does not exist."
@@ -88,8 +87,8 @@ fi
 if [ ! $# -ne 1 ]; then
 	if [ "commit" = $1 ]; then
 		echo 'Now commiting docker container...'
-		docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
+		docker commit ${DOCKER_NAME} ${NAME_IMAGE}:latest
+		CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
 		docker stop $CONTAINER_ID
 		docker rm $CONTAINER_ID -f
 		exit
@@ -100,7 +99,7 @@ fi
 if [ ! $# -ne 1 ]; then
 	if [ "stop" = $1 ]; then
 		echo 'Now stopping docker container...'
-		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
+		CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
 		docker stop $CONTAINER_ID
 		docker rm $CONTAINER_ID -f
 		exit
@@ -111,10 +110,10 @@ fi
 if [ ! $# -ne 1 ]; then
 	if [ "delete" = $1 ]; then
 		echo 'Now deleting docker container...'
-		CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
+		CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
 		docker stop $CONTAINER_ID
 		docker rm $CONTAINER_ID -f
-		docker image rm nvidia_egl_jammy_desktop_ws
+		docker image rm ${NAME_IMAGE}
 		exit
 	fi
 fi
@@ -128,7 +127,6 @@ fi
 chmod a+r $XAUTH
 
 DOCKER_OPT=""
-DOCKER_NAME="nvidia_egl_jammy_desktop_docker"
 DOCKER_WORK_DIR="/home/${USER}"
 KERNEL=$(uname -r)
 
@@ -148,16 +146,10 @@ DOCKER_OPT="${DOCKER_OPT} \
 	-u ${USER} \
 	--shm-size=4096m \
 	-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H} -e REFRESH=60 -e DPI=96 -e CDEPTH=24 \
-	--tmpfs /dev/shm:rw -e WEBRTC_ENCODER=nvh264enc \
+	--tmpfs /dev/shm:rw \
 	-e PULSE_SERVER=unix:/run/pulse/native \
-	--net=custom-net \
-	--ip=172.16.0.2 \
 	--hostname $(hostname)-Docker \
 	--add-host $(hostname)-Docker:127.0.1.1"
-
-## For nvidia-docker
-DOCKER_OPT="${DOCKER_OPT} --gpus all --runtime=nvidia "
-DOCKER_OPT="${DOCKER_OPT} --privileged "
 
 # Device
 if [ ! $# -ne 1 ]; then
@@ -169,26 +161,27 @@ fi
 
 ## Allow X11 Connection
 xhost +local:$(hostname)-Docker
-CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws: | awk '{print $1}')
+CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE}: | awk '{print $1}')
 
 # Run Container
 if [ ! "$CONTAINER_ID" ]; then
 	if [ ! $# -ne 1 ]; then
 		if [ "novnc" = $1 ]; then
 			InputVNCPassword
+			DOCKER_OPT="${DOCKER_OPT} --gpus all "
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-it -e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
-				-v /run/user/1000/pulse/native:/tmp/pulse/native \
+				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
 				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				-p $(id -u):8080 \
+				-p 1$(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+				${NAME_IMAGE}:latest
+			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
+			docker commit ${DOCKER_NAME} ${NAME_IMAGE}:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
@@ -198,19 +191,47 @@ if [ ! "$CONTAINER_ID" ]; then
 	elif [ ! $# -ne 2 ]; then
 		if [ "novnc" = $1 ]; then
 			VNC_PASSWORD=$2
+			DOCKER_OPT="${DOCKER_OPT} --gpus all "
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
 				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
-				-v /run/user/1000/pulse/native:/tmp/pulse/native \
+				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
 				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				-p $(id -u):8080 \
+				-p 1$(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
+				${NAME_IMAGE}:latest
+			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
+			docker commit ${DOCKER_NAME} ${NAME_IMAGE}:latest
+			docker stop $CONTAINER_ID
+			docker rm $CONTAINER_ID -f
+		else
+			echo "Error"
+			exit
+		fi
+	elif [ ! $# -ne 3 ]; then
+		if [ "novnc" = $1 ]; then
+			VNC_PASSWORD=$2
+			GPU_OPT=""
+			if [ ! "none" = $3 ]; then
+				GPU_OPT="--gpus $3"
+			fi
+			docker run ${DOCKER_OPT} \
+				--name=${DOCKER_NAME} \
+				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
+				$GPU_OPT \
+				-e PULSE_COOKIE=/tmp/pulse/cookie \
+				-e PULSE_SERVER=unix:/tmp/pulse/native \
+				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
+				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
+				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
+				-p 1$(id -u):8080 \
+				--entrypoint "/usr/bin/supervisord" \
+				${NAME_IMAGE}:latest
+			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
+			docker commit ${DOCKER_NAME} ${NAME_IMAGE}:latest
 			docker stop $CONTAINER_ID
 			docker rm $CONTAINER_ID -f
 		else
@@ -221,39 +242,11 @@ if [ ! "$CONTAINER_ID" ]; then
 		docker run ${DOCKER_OPT} \
 			--name=${DOCKER_NAME} \
 			-it --entrypoint "bash" \
-			nvidia_egl_jammy_desktop_ws:latest
+			${NAME_IMAGE}:latest
 	fi
 else
-	if [ ! $# -ne 1 ]; then
-		if [ "novnc" = $1 ]; then
-			echo 'Now commiting docker container...'
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-			docker stop $CONTAINER_ID
-			docker rm $CONTAINER_ID -f
-			InputVNCPassword
-			docker run ${DOCKER_OPT} \
-				--name=${DOCKER_NAME} \
-				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
-				-e PULSE_COOKIE=/tmp/pulse/cookie \
-				-e PULSE_SERVER=unix:/tmp/pulse/native \
-				-v /run/user/1000/pulse/native:/tmp/pulse/native \
-				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				-p $(id -u):8080 \
-				-it --entrypoint "/usr/bin/supervisord" \
-				nvidia_egl_jammy_desktop_ws:latest
-			CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_ws | awk '{print $1}')
-			docker commit nvidia_egl_jammy_desktop_docker nvidia_egl_jammy_desktop_ws:latest
-			docker stop $CONTAINER_ID
-			docker rm $CONTAINER_ID -f
-		else
-			echo "Error"
-			exit
-		fi
-	else
-		docker start $CONTAINER_ID
-		docker exec -it $CONTAINER_ID /bin/bash
-	fi
+	docker start $CONTAINER_ID
+	docker exec -it $CONTAINER_ID /bin/bash
 fi
 
 xhost -local:$(hostname)-Docker

@@ -1,5 +1,4 @@
 #!/bin/bash
-SHELL_DIR=$(cd $(dirname $0) && pwd)
 
-cd $SHELL_DIR/scripts
+cd ./files/
 ./launch_container.sh

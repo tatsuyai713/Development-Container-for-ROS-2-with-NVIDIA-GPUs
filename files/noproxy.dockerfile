@@ -48,7 +48,7 @@ RUN sed -i.bak -e "s%http://[^ ]\+%http://ftp.riken.go.jp/Linux/ubuntu/%g" /etc/
 
 # Install locales to prevent X11 errors
 RUN apt-get clean && \
-    apt-get update && apt-get install --no-install-recommends -y locales && \
+    apt-get update && apt-get install -y locales && \
     rm -rf /var/lib/apt/lists/* && \
     locale-gen en_US.UTF-8
 
@@ -59,7 +59,7 @@ ENV LC_ALL en_US.UTF-8
 
 # Install Xvfb and other important libraries or packages
 RUN dpkg --add-architecture i386 && \
-    apt-get update && apt-get install --no-install-recommends -y \
+    apt-get update && apt-get install -y \
     software-properties-common \
     alsa-base \
     alsa-utils \
@@ -170,7 +170,7 @@ RUN dpkg --add-architecture i386 && \
     # Install Xvfb, packages above this line should be the same between docker-nvidia-glx-desktop and docker-nvidia-egl-desktop
     xvfb && \
     # Install Vulkan utilities
-    if [ "${UBUNTU_RELEASE}" \< "20.04" ]; then apt-get install --no-install-recommends -y vulkan-utils; else apt-get install --no-install-recommends -y vulkan-tools; fi && \
+    if [ "${UBUNTU_RELEASE}" \< "20.04" ]; then apt-get install -y vulkan-utils; else apt-get install -y vulkan-tools; fi && \
     rm -rf /var/lib/apt/lists/* && \
     # Configure EGL manually
     mkdir -p /usr/share/glvnd/egl_vendor.d/ && \
@@ -196,7 +196,7 @@ RUN VULKAN_API_VERSION=$(dpkg -s libvulkan1 | grep -oP 'Version: [0-9|\.]+' | gr
 ARG VIRTUALGL_URL="https://sourceforge.net/projects/virtualgl/files"
 RUN curl -fsSL -O "${VIRTUALGL_URL}/virtualgl_${VIRTUALGL_VERSION}_amd64.deb" && \
     curl -fsSL -O "${VIRTUALGL_URL}/virtualgl32_${VIRTUALGL_VERSION}_amd64.deb" && \
-    apt-get update && apt-get install -y --no-install-recommends ./virtualgl_${VIRTUALGL_VERSION}_amd64.deb ./virtualgl32_${VIRTUALGL_VERSION}_amd64.deb && \
+    apt-get update && apt-get install -y ./virtualgl_${VIRTUALGL_VERSION}_amd64.deb ./virtualgl32_${VIRTUALGL_VERSION}_amd64.deb && \
     rm -f "virtualgl_${VIRTUALGL_VERSION}_amd64.deb" "virtualgl32_${VIRTUALGL_VERSION}_amd64.deb" && \
     rm -rf /var/lib/apt/lists/* && \
     chmod u+s /usr/lib/libvglfaker.so && \
@@ -213,7 +213,7 @@ ENV XDG_CURRENT_DESKTOP KDE
 ENV KWIN_COMPOSE N
 # Use sudoedit to change protected files instead of using sudo on kate
 ENV SUDO_EDITOR kate
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN apt-get update && apt-get install -y \
         kde-plasma-desktop \
         kwin-addons \
         kwin-x11 \
@@ -307,19 +307,19 @@ RUN if [ "${UBUNTU_RELEASE}" \< "20.04" ]; then add-apt-repository -y ppa:cyberm
     curl -fsSL -o "/etc/apt/sources.list.d/winehq-$(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2).sources" "https://dl.winehq.org/wine-builds/ubuntu/dists/$(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2)/winehq-$(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2).sources" && \
     apt-get update && apt-get install --install-recommends -y \
         winehq-${WINE_BRANCH} && \
-    apt-get install --no-install-recommends -y \
+    apt-get install -y \
         q4wine \
         playonlinux && \
     LUTRIS_VERSION=$(curl -fsSL "https://api.github.com/repos/lutris/lutris/releases/latest" | jq -r '.tag_name' | sed 's/[^0-9\.\-]*//g') && \
     curl -fsSL -O "https://github.com/lutris/lutris/releases/download/v${LUTRIS_VERSION}/lutris_${LUTRIS_VERSION}_all.deb" && \
-    apt-get install --no-install-recommends -y ./lutris_${LUTRIS_VERSION}_all.deb && rm -f "./lutris_${LUTRIS_VERSION}_all.deb" && \
+    apt-get install -y ./lutris_${LUTRIS_VERSION}_all.deb && rm -f "./lutris_${LUTRIS_VERSION}_all.deb" && \
     rm -rf /var/lib/apt/lists/* && \
     curl -fsSL -o /usr/bin/winetricks "https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks" && \
     chmod 755 /usr/bin/winetricks && \
     curl -fsSL -o /usr/share/bash-completion/completions/winetricks "https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion"
 
 # Install the noVNC web interface and the latest x11vnc for fallback
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN apt-get update && apt-get install -y \
         autoconf \
         automake \
         autotools-dev \
@@ -362,7 +362,7 @@ ARG NEW_HOSTNAME=${HOSTNAME}-Docker
 
 ARG USERNAME=$UNAME
 ARG HOME=/home/$USERNAME
-RUN apt update && apt install --no-install-recommends -y sudo 
+RUN apt update && apt install -y sudo 
 
 RUN useradd -u $UID -m $USERNAME && \
     echo "$USERNAME:$USERNAME" | chpasswd && \
@@ -379,7 +379,7 @@ RUN useradd -u $UID -m $USERNAME && \
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 # install package
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
         build-essential \
         curl \
         sudo \
@@ -442,7 +442,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN if [ "${IN_LOCALE}" = "JP" ]; then \
     apt-get update &&\
-    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends  -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install  -y \
         language-pack-ja-base \
         language-pack-ja \
         fcitx-mozc \
@@ -469,25 +469,25 @@ ENV LANGUAGE ${IN_LANGUAGE}
 # install ROS2 Humble
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-humble-desktop \
+RUN apt-get update && apt-get install -y \
+    ros-humble-desktop-full \
     ros-dev-tools
 
 # install colcon and rosdep
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     python3-rosdep
 
 # install Chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     google-chrome-stable && rm /etc/apt/sources.list.d/google.list
 
 
 # install nodejs 18
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs
+RUN apt-get update && apt-get install -y nodejs
 
 USER $USERNAME
 RUN mkdir /home/${USERNAME}/.config/
@@ -544,9 +544,6 @@ RUN { \
 # initialize rosdep
 RUN sudo rosdep init && \
     rosdep update
-
-RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
-    echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 

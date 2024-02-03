@@ -1,12 +1,8 @@
 #!/bin/bash
 
-SHELL_DIR=$(cd $(dirname $0) && pwd)
+NAME_IMAGE="devcontainer_nvidia_image_for_${USER}"
+DOCKER_NAME="devcontainer_nvidia_for_${USER}"
 
-cd $SHELL_DIR/scripts
-
-NAME_IMAGE='nvidia_egl_jammy_desktop_ws'
-
-sudo apt update
 sudo apt install -y ansible
 
 if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
@@ -14,20 +10,29 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 	exit
 fi
 
-echo "START UPDATE..."
+echo "Update Container"
+cd ./files
 
-nohup ./launch_container.sh novnc test > /tmp/nohup.out &
+nohup ./launch_container.sh novnc test none > /tmp/nohup_${USER}.out &
 
 echo "Please wait 15 seconds..."
 sleep 15
+cd ../
 
-CONTAINER_ID=$(docker ps -a | grep nvidia_egl_jammy_desktop_docker | awk '{print $1}')
-CONTAINER_IP=$(docker inspect $CONTAINER_ID | grep IPAddress | awk -F'[,,"]' 'NR==3{print $4}')
+CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
+CONTAINER_IP=$(docker inspect $CONTAINER_ID | grep IPAddress | awk -F'[,,"]' 'NR==2{print $4}')
+	
 
-ansible-playbook -i ../ansible/inventories/hosts.yml ../ansible/docker.yml
+if [ ! -e ~/.ssh/id_rsa.pub  ]; then
+	ssh-keygen -t rsa
+fi
+
+ssh-keygen -R $CONTAINER_IP
+
+ssh-copy-id -i ~/.ssh/id_rsa.pub $CONTAINER_IP
+
+ansible-playbook -i ${CONTAINER_IP}, ./ansible/update-docker.yml
+
+cd ./files/
 
 ./launch_container.sh commit
-
-echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"
-echo "_/Updating container is finished!!_/"
-echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"

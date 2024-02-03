@@ -1,46 +1,96 @@
-# nvidia-egl-desktop-with-ros
-## Introduction
+# Development Container for ROS 2 with NVIDIA GPUs
 
-This is a Dockerfile to use ROS 2 on KDE Plasma Desktop container with NVIDIA GPU.  
-This Dockerfile is based on [selkies-project/docker-nvidia-egl-desktop](https://github.com/selkies-project/docker-nvidia-egl-desktop).
+## Release
 
-![](nvidia-egl-desktop-ros2-screenshot.png)
+- Version 0.01 Initial Release
 
-## Requirements
+## How to use
 
-- NVIDIA graphics driver 450.80.02+ [^1]
-- Docker
-- nvidia-docker2
-
-## Build Japanese docker image
+1. Clone this repository
 
 ```
-./build_container.sh JP # Support Japanese
-```
-## Build US docker image
-
-```
-./build_container.sh US
+git clone 
 ```
 
-## Launch docker container with novnc (Web Browser)
+2. Build container and setup container environment
 
-Execute the command described below.  
+
+With Japanese Keyboard
 ```
-./start_container.sh
+./build_container JP
 ```
 
-### Access KDE Plasma Desktop via web browser
+With English Keyboard
+```
+./build_container US
 
-Browse <http://127.0.0.1:uid/>.  
-In this docker container, default account is `your login user name`.  
+```
 
-[^1]: <https://github.com/selkies-project/docker-nvidia-egl-desktop/blob/main/README.md>
+3. Start/Stop Container
+
+No SSL
+```
+./start_container.sh all
+./stop_container.sh
+```
+
+With SSL (Put the cert files on /home/user/ssl geberated by make_cert.sh)
+
+```
+SSL_ENABLE=true ./start_container.sh all
+./stop_container.sh
+```
+
+Select GPU
+
+```
+./start_container.sh gpu0
+```
+
+```
+./start_container.sh gpu1
+```
+
+Use all GPUs
+
+```
+./start_container.sh all
+```
+
+NO GPU
+
+```
+./start_container.sh none
+```
+
+4. How to attach container from terminal
 
 
-## attach docker container using bash
-
-Execute the command described below.  
 ```
 ./attach_container.sh
 ```
+
+## How to access Desktop environment
+
+From web browser (Chrome / Edge)
+
+http://ip:1\<UserID\>
+
+with SSL
+
+https://ip:1\<UserID\>
+
+
+
+## How to update container
+
+```
+./update_container.sh
+```
+
+## How to delete container
+
+```
+./delete_container.sh
+```
+
