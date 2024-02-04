@@ -39,11 +39,6 @@ ENV NOVNC_ENABLE true
 ARG VIRTUALGL_VERSION=3.1
 ARG NOVNC_VERSION=1.3.0
 
-ARG IN_LOCALE="JP"
-ARG IN_TZ="Asia/Tokyo"
-ARG IN_LANG="ja_JP.UTF-8"
-ARG IN_LANGUAGE="ja_JP:ja"
-
 RUN sed -i.bak -e "s%http://[^ ]\+%http://ftp.riken.go.jp/Linux/ubuntu/%g" /etc/apt/sources.list
 
 # Install locales to prevent X11 errors

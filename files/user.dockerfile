@@ -1,6 +1,11 @@
 
 FROM ghcr.io/tatsuyai713/development-container-for-ros-2-with-nvidia-gpus:v0.01
 
+ARG IN_LOCALE="JP"
+ARG IN_TZ="Asia/Tokyo"
+ARG IN_LANG="ja_JP.UTF-8"
+ARG IN_LANGUAGE="ja_JP:ja"
+
 ARG UID=9001
 ARG GID=9001
 ARG UNAME=nvidia
@@ -10,6 +15,20 @@ ARG NEW_HOSTNAME=${HOSTNAME}-Docker
 
 ARG USERNAME=$UNAME
 ARG HOME=/home/$USERNAME
+
+RUN useradd -u $UID -m $USERNAME && \
+    echo "$USERNAME:$USERNAME" | chpasswd && \
+    usermod --shell /bin/bash $USERNAME && \
+    usermod -aG sudo $USERNAME && \
+    mkdir /etc/sudoers.d -p && \
+    usermod -a -G adm,audio,cdrom,dialout,dip,fax,floppy,input,lp,lpadmin,plugdev,pulse-access,scanner,sudo,tape,tty,video,voice $USERNAME && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME && \
+    usermod  --uid $UID $USERNAME && \
+    groupmod --gid $GID $USERNAME && \
+    chown -R $USERNAME:$USERNAME $HOME
+
+RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 RUN if [ "${IN_LOCALE}" = "JP" ]; then \
     apt-get update &&\
@@ -31,20 +50,6 @@ RUN if [ "${IN_LOCALE}" = "JP" ]; then \
     && dbus-launch --sh-syntax --exit-with-session > /dev/null \
     ; \
     fi
-
-RUN useradd -u $UID -m $USERNAME && \
-    echo "$USERNAME:$USERNAME" | chpasswd && \
-    usermod --shell /bin/bash $USERNAME && \
-    usermod -aG sudo $USERNAME && \
-    mkdir /etc/sudoers.d -p && \
-    usermod -a -G adm,audio,cdrom,dialout,dip,fax,floppy,input,lp,lpadmin,plugdev,pulse-access,scanner,sudo,tape,tty,video,voice $USERNAME && \
-    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME && \
-    chmod 0440 /etc/sudoers.d/$USERNAME && \
-    usermod  --uid $UID $USERNAME && \
-    groupmod --gid $GID $USERNAME && \
-    chown -R $USERNAME:$USERNAME $HOME
-
-RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 ENV TZ ${IN_TZ}
 ENV LANG ${IN_LANG}
@@ -109,14 +114,13 @@ RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 
 USER root
 
+# Enable ssh
+RUN systemctl enable ssh
+
 RUN sed -i "s/<user>/$USERNAME/g" /etc/entrypoint.sh
 RUN sed -i "s/<user>/$USERNAME/g" /etc/supervisord.conf
 
 RUN chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
-
-
-# Enable ssh
-RUN systemctl enable ssh
 
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*

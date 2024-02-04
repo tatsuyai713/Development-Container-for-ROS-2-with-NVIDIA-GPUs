@@ -62,7 +62,7 @@ sudo pwd # check sudo
 InputVNCPassword
 nohup ./launch_container.sh novnc ${VNC_PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out &
 
-sleep 1
+sleep 3
 echo ""
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"
 echo "_/  Please access 'http(s)://localhost:1`id -u`'   _/"
