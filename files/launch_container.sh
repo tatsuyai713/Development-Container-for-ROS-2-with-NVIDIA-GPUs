@@ -31,11 +31,11 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 			if [ "$http_proxy" ]; then
 				echo "Image ${NAME_IMAGE} does not exist."
 				echo 'Now building JP image with proxy...'
-				docker build --file=./proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
+				docker build --file=./user_proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
 			else
 				echo "Image ${NAME_IMAGE} does not exist."
 				echo 'Now building JP image without proxy...'
-				docker build --file=./noproxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER
+				docker build --file=./user.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER
 			fi
 			exit
 		fi
@@ -45,21 +45,21 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 				if [ "$http_proxy" ]; then
 					echo "Image ${NAME_IMAGE} does not exist."
 					echo 'Now building US image with proxy...'
-					docker build --file=./proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg IN_LOCALE='US' --build-arg IN_TZ='UTC' --build-arg IN_LANG='en_US.UTF-8' --build-arg IN_LANGUAGE='en_US:en' --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
+					docker build --file=./user_proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg IN_LOCALE='US' --build-arg IN_TZ='UTC' --build-arg IN_LANG='en_US.UTF-8' --build-arg IN_LANGUAGE='en_US:en' --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
 				else
 					echo "Image ${NAME_IMAGE} does not exist."
 					echo 'Now building US image without proxy...'
-					docker build --file=./noproxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg IN_LOCALE='US' --build-arg IN_TZ='UTC' --build-arg IN_LANG='en_US.UTF-8' --build-arg IN_LANGUAGE='en_US:en'
+					docker build --file=./user.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg IN_LOCALE='US' --build-arg IN_TZ='UTC' --build-arg IN_LANG='en_US.UTF-8' --build-arg IN_LANGUAGE='en_US:en'
 				fi
 			else
 				if [ "$http_proxy" ]; then
 					echo "Image ${NAME_IMAGE} does not exist."
 					echo 'Now building JP image with proxy...'
-					docker build --file=./proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
+					docker build --file=./user_proxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER --build-arg HTTP_PROXY=$http_proxy --build-arg HTTPS_PROXY=$https_proxy
 				else
 					echo "Image ${NAME_IMAGE} does not exist."
 					echo 'Now building JP image without proxy...'
-					docker build --file=./noproxy.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER
+					docker build --file=./user.dockerfile -t $NAME_IMAGE . --build-arg UID=$(id -u) --build-arg GID=$(id -g) --build-arg UNAME=$USER
 				fi
 			fi
 			exit

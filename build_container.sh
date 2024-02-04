@@ -37,7 +37,7 @@ if [ ! -e ~/.ssh/id_rsa.pub  ]; then
 fi
 
 ssh-keygen -R $CONTAINER_IP
-
+sleep 3
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"
 echo "_/  Please type 'test' as temporary password!!  _/"
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"

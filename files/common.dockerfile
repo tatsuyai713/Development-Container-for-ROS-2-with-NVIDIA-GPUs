@@ -351,32 +351,6 @@ RUN apt-get update && apt-get install -y \
     # Use the latest Websockify source to expose noVNC
     pip3 install git+https://github.com/novnc/websockify.git@v0.10.0
 
-# Add custom packages right below this comment, or use FROM in a new container and replace entrypoint.sh or supervisord.conf, and set ENTRYPOINT to /usr/bin/supervisord
-
-ARG UID=9001
-ARG GID=9001
-ARG UNAME=nvidia
-ARG HOSTNAME=docker
-
-ARG NEW_HOSTNAME=${HOSTNAME}-Docker
-
-ARG USERNAME=$UNAME
-ARG HOME=/home/$USERNAME
-RUN apt update && apt install -y sudo 
-
-RUN useradd -u $UID -m $USERNAME && \
-    echo "$USERNAME:$USERNAME" | chpasswd && \
-    usermod --shell /bin/bash $USERNAME && \
-    usermod -aG sudo $USERNAME && \
-    mkdir /etc/sudoers.d -p && \
-    usermod -a -G adm,audio,cdrom,dialout,dip,fax,floppy,input,lp,lpadmin,plugdev,pulse-access,scanner,sudo,tape,tty,video,voice $USERNAME && \
-    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME && \
-    chmod 0440 /etc/sudoers.d/$USERNAME && \
-    usermod  --uid $UID $USERNAME && \
-    groupmod --gid $GID $USERNAME && \
-    chown -R $USERNAME:$USERNAME $HOME
-
-RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 # install package
 RUN apt-get update && apt-get install -y \
@@ -440,30 +414,6 @@ RUN apt-get update && apt-get install -y \
         libdbus-1-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN if [ "${IN_LOCALE}" = "JP" ]; then \
-    apt-get update &&\
-    DEBIAN_FRONTEND=noninteractive apt-get install  -y \
-        language-pack-ja-base \
-        language-pack-ja \
-        fcitx-mozc \
-        fcitx-libs-dev \
-        fcitx-module-dbus \
-        kde-config-fcitx \
-        fcitx \
-        fcitx-frontend-gtk2 \
-        fcitx-frontend-gtk3 \
-        fcitx-frontend-qt5 \
-        fcitx-ui-classic \
-        mozc-utils-gui && \
-    rm -rf /var/lib/apt/lists/* \
-    && locale-gen ja_JP.UTF-8 \
-    && dbus-launch --sh-syntax --exit-with-session > /dev/null \
-    ; \
-    fi
-
-ENV TZ ${IN_TZ}
-ENV LANG ${IN_LANG}
-ENV LANGUAGE ${IN_LANGUAGE}
 
 
 # install ROS2 Humble
@@ -478,74 +428,17 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     python3-rosdep
 
+RUN rosdep init 
+
 # install Chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
 
 RUN apt-get update && apt-get install -y \
     google-chrome-stable && rm /etc/apt/sources.list.d/google.list
 
-
 # install nodejs 18
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update && apt-get install -y nodejs
-
-USER $USERNAME
-RUN mkdir /home/${USERNAME}/.config/
-RUN touch /home/${USERNAME}/.config/user-dirs.dirs
-RUN if [ "${IN_LOCALE}" = "JP" ]; then \
-    { \
-    echo 'XDG_DESKTOP_DIR="$HOME/Desktop"'; \
-    echo 'XDG_DOWNLOAD_DIR="$HOME/Downloads"'; \
-    echo 'XDG_TEMPLATES_DIR="$HOME/Templates"'; \
-    echo 'XDG_PUBLICSHARE_DIR="$HOME/Public"'; \
-    echo 'XDG_DOCUMENTS_DIR="$HOME/Documents"'; \
-    echo 'XDG_MUSIC_DIR="$HOME/Music"'; \
-    echo 'XDG_PICTURES_DIR="$HOME/Pictures"'; \
-    echo 'XDG_VIDEOS_DIR="$HOME/Videos"'; \
-    } > /home/${USERNAME}/.config/user-dirs.dirs \
-    ; \
-    fi    
-RUN mkdir /home/${USERNAME}/Desktop/
-RUN mkdir /home/${USERNAME}/Downloads/
-RUN mkdir /home/${USERNAME}/Templates/
-RUN mkdir /home/${USERNAME}/Public/
-RUN mkdir /home/${USERNAME}/Documents/
-RUN mkdir /home/${USERNAME}/Music/
-RUN mkdir /home/${USERNAME}/Pictures/
-RUN mkdir /home/${USERNAME}/Videos/
-
-# disabled beep sound
-RUN echo "set bell-style none" >> ~/.inputrc
-
-RUN touch /home/${USERNAME}/Desktop/home.desktop
-RUN touch /home/${USERNAME}/Desktop/trash.desktop
-
-# Make Desktop Icons
-RUN { \
-    echo "[Desktop Entry]"; \
-    echo "Encoding=UTF-8"; \
-    echo "Name=Home"; \
-    echo "GenericName=Personal Files"; \
-    echo "URL[$e]=$HOME"; \
-    echo "Icon=user-home"; \
-    echo "Type=Link"; \
-    } > /home/${USERNAME}/Desktop/home.desktop
-
-RUN { \
-    echo "[Desktop Entry]"; \
-    echo "Name=Trash"; \
-    echo "Comment=Contains removed files"; \
-    echo "Icon=user-trash-full"; \
-    echo "EmptyIcon=user-trash"; \
-    echo "URL=trash:/"; \
-    echo "Type=Link"; \
-    } > /home/${USERNAME}/Desktop/trash.desktop
-
-# initialize rosdep
-RUN sudo rosdep init && \
-    rosdep update
-
-RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 
 USER root
 
@@ -555,22 +448,9 @@ RUN chmod 755 /etc/entrypoint.sh
 COPY supervisord.conf /etc/supervisord.conf
 RUN chmod 755 /etc/supervisord.conf
 
-# Enable ssh
-RUN systemctl enable ssh
-
-RUN sed -i "s/<user>/$USERNAME/g" /etc/entrypoint.sh
-RUN sed -i "s/<user>/$USERNAME/g" /etc/supervisord.conf
-
-RUN chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
 
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN rm /etc/apt/apt.conf.d/docker-clean
 
-USER $USERNAME
-ENV SHELL /bin/bash
-ENV USER $USERNAME
-WORKDIR /home/$USERNAME
-
-ENTRYPOINT ["/usr/bin/supervisord"]
