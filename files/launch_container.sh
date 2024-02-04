@@ -142,6 +142,7 @@ DOCKER_OPT="${DOCKER_OPT} \
 	--env=TERM=xterm-256color \
 	--volume=${XAUTH}:${XAUTH} \
 	--env=DISPLAY=${DISPLAY} \
+	--privileged \
 	-w ${DOCKER_WORK_DIR} \
 	-u ${USER} \
 	--shm-size=4096m \
