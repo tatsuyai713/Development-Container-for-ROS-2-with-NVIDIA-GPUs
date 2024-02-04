@@ -22,12 +22,15 @@ fi
 
 nohup ./launch_container.sh novnc test none > /tmp/nohup_${USER}.out &
 
-echo "Please wait 15 seconds..."
-sleep 15
+echo "Please wait..."
 cd ../
 
-CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
-CONTAINER_IP=$(docker inspect $CONTAINER_ID | grep IPAddress | awk -F'[,,"]' 'NR==2{print $4}')
+# ここからwhileループで値が入るまで待機する
+while [ -z "$CONTAINER_ID" ] || [ -z "$CONTAINER_IP" ]; do
+    CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
+    CONTAINER_IP=$(docker inspect $CONTAINER_ID | grep IPAddress | awk -F'[,,"]' 'NR==2{print $4}')
+    sleep 1
+done
 
 if [ ! -e ~/.ssh/id_rsa.pub  ]; then
 	ssh-keygen -t rsa
