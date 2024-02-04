@@ -22,6 +22,7 @@ cd ../
 while [ -z "$CONTAINER_ID" ] || [ -z "$CONTAINER_IP" ]; do
     CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
     CONTAINER_IP=$(docker inspect $CONTAINER_ID | grep IPAddress | awk -F'[,,"]' 'NR==2{print $4}')
+    echo "Please wait until container running..."
     sleep 1
 done
 	
