@@ -112,6 +112,9 @@ RUN rosdep update
 
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 
+RUN mkdir -p /home/${USERNAME}/.local/share/applications/
+COPY google-chrome.desktop /home/${USERNAME}/.local/share/applications/
+
 USER root
 
 # Enable ssh
