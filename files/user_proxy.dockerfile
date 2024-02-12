@@ -134,6 +134,8 @@ COPY fix_chrome_browser.sh /home/${USERNAME}/fix_chrome_browser.sh
 RUN chmod +x /home/${USERNAME}/fix_chrome_browser.sh
 
 USER root
+RUN apt update
+RUN apt upgrade -y
 
 # Fix chrome
 RUN sed -i -e "s#/usr/bin/google-chrome-stable#/usr/bin/google-chrome-stable --no-sandbox#g" /usr/share/applications/google-chrome.desktop
