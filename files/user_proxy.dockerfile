@@ -131,12 +131,12 @@ RUN rosdep update
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> /home/${USERNAME}/.bashrc
 
 COPY fix_chrome_browser.sh /home/${USERNAME}/fix_chrome_browser.sh
+RUN chmod +x /home/${USERNAME}/fix_chrome_browser.sh
 
 USER root
 
 # Fix chrome
 RUN sed -i -e "s#/usr/bin/google-chrome-stable#/usr/bin/google-chrome-stable --no-sandbox#g" /usr/share/applications/google-chrome.desktop
-
 
 # Enable ssh
 RUN systemctl enable ssh
