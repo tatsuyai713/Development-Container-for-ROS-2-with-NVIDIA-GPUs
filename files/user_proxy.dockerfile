@@ -131,9 +131,11 @@ RUN rosdep update
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> /home/${USERNAME}/.bashrc
 
 COPY fix_chrome_browser.sh /home/${USERNAME}/fix_chrome_browser.sh
-RUN chmod +x /home/${USERNAME}/fix_chrome_browser.sh
 
 USER root
+
+RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME}/fix_chrome_browser.sh
+RUN chmod +x /home/${USERNAME}/fix_chrome_browser.sh
 RUN apt update
 RUN apt upgrade -y
 
