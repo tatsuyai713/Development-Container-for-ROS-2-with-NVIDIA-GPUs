@@ -12,6 +12,8 @@ fi
 
 REGION=$1
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+cd $SCRIPT_DIR
 cd ./files/
 
 if [ "US" = $REGION ]; then

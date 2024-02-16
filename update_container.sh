@@ -10,6 +10,8 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 	exit
 fi
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+cd $SCRIPT_DIR
 echo "Update Container"
 cd ./files
 

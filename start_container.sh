@@ -41,6 +41,8 @@ function InputVNCPassword() {
 NAME_IMAGE="devcontainer_nvidia_image_for_${USER}"
 DOCKER_NAME="devcontainer_nvidia_for_${USER}"
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+cd $SCRIPT_DIR
 cd ./files/
 if [ "$(docker ps -al | grep ${DOCKER_NAME})" ]; then
 	echo "docker container already started...(GPU option is ignored.)"
