@@ -60,7 +60,7 @@ if [ "$(docker ps -al | grep ${DOCKER_NAME})" ]; then
 fi
 sudo pwd # check sudo
 InputVNCPassword
-nohup ./launch_container.sh novnc ${VNC_PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out &
+nohup ./launch_container.sh novnc ${VNC_PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out 2>&1 &
 
 sleep 3
 echo ""
