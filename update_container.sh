@@ -13,7 +13,7 @@ fi
 echo "Update Container"
 cd ./files
 
-nohup ./launch_container.sh novnc test none > /tmp/nohup_${USER}.out &
+nohup ./launch_container.sh vnc test none > /tmp/nohup_${USER}.out &
 
 echo "Please wait..."
 cd ../

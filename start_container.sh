@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VNC_PASSWORD="test"
+PASSWORD="test"
 
 if [ $# -ne 1 ]; then
 	echo "Please select GPU. (gpu0, gpu1,..., all or none(default))"
@@ -28,13 +28,13 @@ fi
 
 echo "GPU OPTION is ${GPU_OPTION}"
 
-function InputVNCPassword() {
-	echo "Please input VNC Password."
+function InputPassword() {
+	echo "Please input User Password."
 	read input
 	if [ -z $input ] ; then
-		InputVNCPassword
+		InputPassword
 	else
-		VNC_PASSWORD=$input 
+		PASSWORD=$input 
 	fi
 }
 
@@ -59,12 +59,12 @@ if [ "$(docker ps -al | grep ${DOCKER_NAME})" ]; then
 	exit
 fi
 sudo pwd # check sudo
-InputVNCPassword
-nohup ./launch_container.sh novnc ${VNC_PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out &
+InputPassword
+nohup ./launch_container.sh vnc ${PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out &
 
 sleep 3
 echo ""
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"
-echo "_/  Please access 'http(s)://localhost:1`id -u`'   _/"
-echo "_/    or 'http(s)://<PC IP ADDRESS>:1`id -u`'      _/"
+echo "_/  Please access 'https://localhost:2`id -u`'    _/"
+echo "_/    or 'https://<PC IP ADDRESS>:1`id -u`'       _/"
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"

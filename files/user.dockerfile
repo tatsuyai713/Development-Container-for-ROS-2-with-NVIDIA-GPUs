@@ -1,5 +1,5 @@
 
-FROM ghcr.io/tatsuyai713/development-container-for-ros-2-with-nvidia-gpus:v0.01
+FROM ghcr.io/tatsuyai713/development-container-for-ros-2-with-nvidia-gpus:v0.02
 
 ARG IN_LOCALE="JP"
 ARG IN_TZ="Asia/Tokyo"
@@ -112,7 +112,17 @@ RUN rosdep update
 
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 
+RUN sudo gpasswd -a $USERNAME ssl-cert
+
 USER root
+
+RUN echo "#!/bin/bash" > /usr/local/bin/setup_vncpasswd.sh
+RUN echo "vncpasswd -u $USER -w -r" >> /usr/local/bin/setup_vncpasswd.sh
+RUN chmod +x /usr/local/bin/setup_vncpasswd.sh
+
+RUN rm /etc/kasmvnc/kasmvnc.yaml
+COPY kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
+
 
 # Enable ssh
 RUN systemctl enable ssh

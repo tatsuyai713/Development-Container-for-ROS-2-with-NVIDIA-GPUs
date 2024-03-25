@@ -7,13 +7,13 @@ SCRIPT_DIR=$(
 RESOLUTION_W="1920"
 RESOLUTION_H="1080"
 
-function InputVNCPassword() {
-	echo "Please input VNC Password."
+function InputPassword() {
+	echo "Please input User Password."
 	read input
 	if [ -z $input ]; then
-		InputVNCPassword
+		InputPassword
 	else
-		VNC_PASSWORD=$input
+		PASSWORD=$input
 	fi
 }
 
@@ -148,6 +148,7 @@ DOCKER_OPT="${DOCKER_OPT} \
 	--shm-size=4096m \
 	-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H} -e REFRESH=60 -e DPI=96 -e CDEPTH=24 \
 	--tmpfs /dev/shm:rw \
+	-p 2$(id -u):8444 \
 	-e PULSE_SERVER=unix:/run/pulse/native \
 	--hostname $(hostname)-Docker \
 	--add-host $(hostname)-Docker:127.0.1.1"
@@ -167,12 +168,12 @@ CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE}: | awk '{print $1}')
 # Run Container
 if [ ! "$CONTAINER_ID" ]; then
 	if [ ! $# -ne 1 ]; then
-		if [ "novnc" = $1 ]; then
-			InputVNCPassword
+		if [ "vnc" = $1 ]; then
+			InputPassword
 			DOCKER_OPT="${DOCKER_OPT} --gpus all "
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
-				-it -e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
+				-it -e PASSWD=${PASSWORD} -e BASIC_AUTH_PASSWORD=${PASSWORD} \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
@@ -190,12 +191,12 @@ if [ ! "$CONTAINER_ID" ]; then
 			exit
 		fi
 	elif [ ! $# -ne 2 ]; then
-		if [ "novnc" = $1 ]; then
-			VNC_PASSWORD=$2
+		if [ "vnc" = $1 ]; then
+			PASSWORD=$2
 			DOCKER_OPT="${DOCKER_OPT} --gpus all "
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
-				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
+				-e PASSWD=${PASSWORD} -e BASIC_AUTH_PASSWORD=${PASSWORD} \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
@@ -213,15 +214,15 @@ if [ ! "$CONTAINER_ID" ]; then
 			exit
 		fi
 	elif [ ! $# -ne 3 ]; then
-		if [ "novnc" = $1 ]; then
-			VNC_PASSWORD=$2
+		if [ "vnc" = $1 ]; then
+			PASSWORD=$2
 			GPU_OPT=""
 			if [ ! "none" = $3 ]; then
 				GPU_OPT="--gpus $3"
 			fi
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
-				-e PASSWD=${VNC_PASSWORD} -e BASIC_AUTH_PASSWORD=${VNC_PASSWORD} \
+				-e PASSWD=${PASSWORD} -e BASIC_AUTH_PASSWORD=${PASSWORD} \
 				$GPU_OPT \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
