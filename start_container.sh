@@ -66,5 +66,5 @@ sleep 3
 echo ""
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"
 echo "_/  Please access 'https://localhost:2`id -u`'    _/"
-echo "_/    or 'https://<PC IP ADDRESS>:1`id -u`'       _/"
+echo "_/    or 'https://<PC IP ADDRESS>:2`id -u`'       _/"
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"
