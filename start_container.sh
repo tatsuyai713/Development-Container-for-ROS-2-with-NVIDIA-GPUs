@@ -41,12 +41,14 @@ function InputPassword() {
 NAME_IMAGE="devcontainer_nvidia_image_for_${USER}"
 DOCKER_NAME="devcontainer_nvidia_for_${USER}"
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+cd $SCRIPT_DIR
 cd ./files/
 if [ "$(docker ps -al | grep ${DOCKER_NAME})" ]; then
 	echo "docker container already started...(GPU option is ignored.)"
 	CONTAINER_ID=$(docker ps -a | grep ${DOCKER_NAME} | awk '{print $1}')
 	
-	sudo rm -rf /tmp/.docker.xauth
+	rm -rf /tmp/.docker.xauth
 	XAUTH=/tmp/.docker.xauth
 	touch $XAUTH
 	xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
@@ -58,13 +60,13 @@ if [ "$(docker ps -al | grep ${DOCKER_NAME})" ]; then
 	docker start $CONTAINER_ID
 	exit
 fi
-sudo pwd # check sudo
+
 InputPassword
-nohup ./launch_container.sh vnc ${PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out &
+nohup ./launch_container.sh vnc ${PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out 2>&1 &
 
 sleep 3
 echo ""
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"
-echo "_/  Please access 'https://localhost:2`id -u`'    _/"
-echo "_/    or 'https://<PC IP ADDRESS>:2`id -u`'       _/"
+echo "_/   Please access 'https://localhost:3`id -u`'    _/"
+echo "_/     or 'https://<PC IP ADDRESS>:3`id -u`'       _/"
 echo "_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/"

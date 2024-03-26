@@ -1,8 +1,10 @@
 #!/bin/bash
+
 SCRIPT_DIR=$(
 	cd $(dirname $0)
 	pwd
 )
+
 
 RESOLUTION_W="1920"
 RESOLUTION_H="1080"
@@ -16,10 +18,6 @@ function InputPassword() {
 		PASSWORD=$input
 	fi
 }
-
-sudo service docker start
-
-sleep 3
 
 NAME_IMAGE="devcontainer_nvidia_image_for_${USER}"
 DOCKER_NAME="devcontainer_nvidia_for_${USER}"
@@ -142,13 +140,12 @@ DOCKER_OPT="${DOCKER_OPT} \
 	--env=TERM=xterm-256color \
 	--volume=${XAUTH}:${XAUTH} \
 	--env=DISPLAY=${DISPLAY} \
-	--privileged \
 	-w ${DOCKER_WORK_DIR} \
 	-u ${USER} \
 	--shm-size=4096m \
 	-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H} -e REFRESH=60 -e DPI=96 -e CDEPTH=24 \
 	--tmpfs /dev/shm:rw \
-	-p 2$(id -u):8444 \
+	-p 3$(id -u):8444 \
 	-e PULSE_SERVER=unix:/run/pulse/native \
 	--hostname $(hostname)-Docker \
 	--add-host $(hostname)-Docker:127.0.1.1"

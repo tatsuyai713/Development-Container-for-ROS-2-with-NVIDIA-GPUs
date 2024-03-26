@@ -33,11 +33,9 @@ ENV DPI 96
 ENV CDEPTH 24
 ENV VGL_DISPLAY egl
 ENV PASSWD mypasswd
-ENV NOVNC_ENABLE true
 
 # Set versions for components that should be manually checked before upgrading, other component versions are automatically determined by fetching the version online
 ARG VIRTUALGL_VERSION=3.1
-ARG NOVNC_VERSION=1.3.0
 
 RUN sed -i.bak -e "s%http://[^ ]\+%http://ftp.riken.go.jp/Linux/ubuntu/%g" /etc/apt/sources.list
 
@@ -313,39 +311,7 @@ RUN if [ "${UBUNTU_RELEASE}" \< "20.04" ]; then add-apt-repository -y ppa:cyberm
     chmod 755 /usr/bin/winetricks && \
     curl -fsSL -o /usr/share/bash-completion/completions/winetricks "https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion"
 
-# Install the noVNC web interface and the latest x11vnc for fallback
-# RUN apt-get update && apt-get install -y \
-#         autoconf \
-#         automake \
-#         autotools-dev \
-#         chrpath \
-#         debhelper \
-#         git \
-#         jq \
-#         python3 \
-#         python3-numpy \
-#         libc6-dev \
-#         libcairo2-dev \
-#         libjpeg-turbo8-dev \
-#         libssl-dev \
-#         libv4l-dev \
-#         libvncserver-dev \
-#         libtool-bin \
-#         libxdamage-dev \
-#         libxinerama-dev \
-#         libxrandr-dev \
-#         libxss-dev \
-#         libxtst-dev \
-#         libavahi-client-dev && \
-#     rm -rf /var/lib/apt/lists/* && \
-#     # Build the latest x11vnc source to avoid various errors
-#     git clone "https://github.com/LibVNC/x11vnc.git" /tmp/x11vnc && \
-#     cd /tmp/x11vnc && autoreconf -fi && ./configure && make install && cd / && rm -rf /tmp/* && \
-#     git clone https://github.com/tatsuyai713/noVNC.git -b add_clipboard_support /opt/noVNC && \
-#     ln -snf /opt/noVNC/vnc.html /opt/noVNC/index.html && \
-#     # Use the latest Websockify source to expose noVNC
-#     pip3 install git+https://github.com/novnc/websockify.git@v0.10.0
-
+# KasmVNC
 RUN wget https://github.com/kasmtech/KasmVNC/releases/download/v1.3.1/kasmvncserver_jammy_1.3.1_amd64.deb
 RUN apt update && apt install -y ./kasmvncserver_jammy_1.3.1_amd64.deb
 RUN rm ./kasmvncserver_jammy_1.3.1_amd64.deb && \
@@ -412,8 +378,6 @@ RUN apt-get update && apt-get install -y \
         cmake \
         libdbus-1-dev && \
     rm -rf /var/lib/apt/lists/*
-
-
 
 # install ROS2 Humble
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \

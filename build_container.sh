@@ -12,6 +12,8 @@ fi
 
 REGION=$1
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+cd $SCRIPT_DIR
 cd ./files/
 
 if [ "US" = $REGION ]; then
@@ -60,7 +62,7 @@ docker rm $CONTAINER_ID -f
 # docker stop $CONTAINER_ID
 # docker rm $CONTAINER_ID -f
 
-nohup ./launch_container.sh vnc test none > /tmp/nohup_${USER}.out &
+nohup ./launch_container.sh vnc test none > /tmp/nohup_${USER}.out 2>&1 &
 
 echo "Please wait..."
 cd ../
