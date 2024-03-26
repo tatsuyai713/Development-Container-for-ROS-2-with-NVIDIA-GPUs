@@ -45,10 +45,6 @@ else
   exit # retry
 fi
 
-# Run the x11vnc
-
-x11vnc -display "${DISPLAY}" -passwd "${BASIC_AUTH_PASSWORD:-$PASSWD}" -shared -forever -repeat -xkb -snapfb -threads -xrandr "resize" -rfbport 5900 &
-
 vncserver &
 
 # Choose startplasma-x11 or startkde for KDE startup
