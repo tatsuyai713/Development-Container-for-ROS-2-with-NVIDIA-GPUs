@@ -175,8 +175,6 @@ if [ ! "$CONTAINER_ID" ]; then
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				-p 1$(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
 				${NAME_IMAGE}:latest
 			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
@@ -198,8 +196,6 @@ if [ ! "$CONTAINER_ID" ]; then
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				-p 1$(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
 				${NAME_IMAGE}:latest
 			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
@@ -225,8 +221,6 @@ if [ ! "$CONTAINER_ID" ]; then
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
-				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
-				-p 1$(id -u):8080 \
 				--entrypoint "/usr/bin/supervisord" \
 				${NAME_IMAGE}:latest
 			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
