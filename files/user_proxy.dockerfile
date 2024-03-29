@@ -130,6 +130,10 @@ RUN rosdep update
 
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 
+COPY fix_chrome_browser.sh /home/${USERNAME}/fix_chrome_browser.sh
+RUN chmod +x /home/${USERNAME}/fix_chrome_browser.sh
+RUN /home/${USERNAME}/fix_chrome_browser.sh
+
 RUN sudo gpasswd -a $USERNAME ssl-cert
 
 USER root
