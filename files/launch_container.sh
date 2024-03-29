@@ -170,11 +170,13 @@ if [ ! "$CONTAINER_ID" ]; then
 			DOCKER_OPT="${DOCKER_OPT} --gpus all "
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
-				-it -e PASSWD=${PASSWORD} -e BASIC_AUTH_PASSWORD=${PASSWORD} \
+				-it \
+				-e PASSWD=${PASSWORD} \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
+				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				--entrypoint "/usr/bin/supervisord" \
 				${NAME_IMAGE}:latest
 			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
@@ -191,11 +193,12 @@ if [ ! "$CONTAINER_ID" ]; then
 			DOCKER_OPT="${DOCKER_OPT} --gpus all "
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
-				-e PASSWD=${PASSWORD} -e BASIC_AUTH_PASSWORD=${PASSWORD} \
+				-e PASSWD=${PASSWORD} \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
+				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				--entrypoint "/usr/bin/supervisord" \
 				${NAME_IMAGE}:latest
 			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
@@ -215,12 +218,13 @@ if [ ! "$CONTAINER_ID" ]; then
 			fi
 			docker run ${DOCKER_OPT} \
 				--name=${DOCKER_NAME} \
-				-e PASSWD=${PASSWORD} -e BASIC_AUTH_PASSWORD=${PASSWORD} \
+				-e PASSWD=${PASSWORD} \
 				$GPU_OPT \
 				-e PULSE_COOKIE=/tmp/pulse/cookie \
 				-e PULSE_SERVER=unix:/tmp/pulse/native \
 				-v /run/user/$(id -u)/pulse/native:/tmp/pulse/native \
 				-v /home/$USER/.config/pulse/cookie:/tmp/pulse/cookie:ro \
+				-e SSL_ENABLE=${SSL_ENABLE} -e CERT_PATH="/home/$USER/host_home/ssl/" \
 				--entrypoint "/usr/bin/supervisord" \
 				${NAME_IMAGE}:latest
 			CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
