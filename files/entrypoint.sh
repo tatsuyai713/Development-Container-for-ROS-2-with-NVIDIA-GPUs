@@ -50,7 +50,7 @@ if [ "${SSL_ENABLE,,}" = "true" ]; then
   CERT="-cert $CERT_PATH/server.crt -key $CERT_PATH/server.key"
 fi
 
-vncserver $DISPLAY -depth ${CDEPTH} -geometry ${SIZEW}x${SIZEH} -FrameRate=60 -websocketPort 8444 -RectThreads 1 $SSL $CERT &
+vncserver -depth ${CDEPTH} -geometry ${SIZEW}x${SIZEH} -FrameRate=60 -websocketPort 8444 -RectThreads 1 $SSL $CERT &
 
 # Choose startplasma-x11 or startkde for KDE startup
 if [ -x "$(command -v startplasma-x11)" ]; then export KDE_START="startplasma-x11"; else export KDE_START="startkde"; fi
