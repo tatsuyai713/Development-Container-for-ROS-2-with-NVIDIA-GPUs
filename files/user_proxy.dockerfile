@@ -1,5 +1,5 @@
 
-FROM ghcr.io/tatsuyai713/development-container-for-ros-2-with-nvidia-gpus:v0.01
+FROM ghcr.io/tatsuyai713/development-container-for-ros-2-with-nvidia-gpus:v0.02
 
 ARG IN_LOCALE="JP"
 ARG IN_TZ="Asia/Tokyo"
