@@ -60,15 +60,9 @@ if [ "$(docker ps -al | grep ${DOCKER_NAME})" ]; then
 	docker start $CONTAINER_ID
 	exit
 fi
-<<<<<<< HEAD
 
 InputPassword
 nohup ./launch_container.sh vnc ${PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out 2>&1 &
-=======
-sudo pwd # check sudo
-InputVNCPassword
-nohup ./launch_container.sh novnc ${VNC_PASSWORD} ${GPU_OPTION} > /tmp/nohup_${USER}.out 2>&1 &
->>>>>>> main
 
 sleep 3
 echo ""

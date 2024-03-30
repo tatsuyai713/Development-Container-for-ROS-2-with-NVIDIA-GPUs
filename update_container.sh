@@ -12,16 +12,10 @@ if [ ! "$(docker image ls -q ${NAME_IMAGE})" ]; then
 	exit
 fi
 
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-cd $SCRIPT_DIR
 echo "Update Container"
 cd ./files
 
-<<<<<<< HEAD
 nohup ./launch_container.sh vnc test none > /tmp/nohup_${USER}.out 2>&1 &
-=======
-nohup ./launch_container.sh novnc test none > /tmp/nohup_${USER}.out 2>&1 &
->>>>>>> main
 
 echo "Please wait..."
 cd ../
