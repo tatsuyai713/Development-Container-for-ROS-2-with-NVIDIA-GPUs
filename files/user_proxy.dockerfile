@@ -99,7 +99,7 @@ RUN mkdir /home/${USERNAME}/Pictures/
 RUN mkdir /home/${USERNAME}/Videos/
 
 # disabled beep sound
-RUN echo "set bell-style none" >> ~/.inputrc
+RUN echo "set bell-style none" >> /home/${USERNAME}/.inputrc
 
 RUN touch /home/${USERNAME}/Desktop/home.desktop
 RUN touch /home/${USERNAME}/Desktop/trash.desktop
@@ -128,7 +128,9 @@ RUN { \
 # initialize rosdep
 RUN rosdep update
 
-RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
+RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> /home/${USERNAME}/.bashrc
+
+COPY fix_chrome_browser.sh /home/${USERNAME}/fix_chrome_browser.sh
 
 COPY fix_chrome_browser.sh /home/${USERNAME}/fix_chrome_browser.sh
 
@@ -145,6 +147,14 @@ RUN chmod +x /usr/local/bin/setup_vncpasswd.sh
 RUN rm /etc/kasmvnc/kasmvnc.yaml
 COPY kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
 
+
+RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME}/fix_chrome_browser.sh
+RUN chmod +x /home/${USERNAME}/fix_chrome_browser.sh
+RUN apt update
+RUN apt upgrade -y
+
+# Fix chrome
+RUN sed -i -e "s#/usr/bin/google-chrome-stable#/usr/bin/google-chrome-stable --no-sandbox#g" /usr/share/applications/google-chrome.desktop
 
 # Enable ssh
 RUN systemctl enable ssh

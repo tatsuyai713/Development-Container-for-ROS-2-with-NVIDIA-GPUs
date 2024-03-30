@@ -50,18 +50,6 @@ docker commit ${DOCKER_NAME} ${NAME_IMAGE}:latest
 docker stop $CONTAINER_ID
 docker rm $CONTAINER_ID -f
 
-# echo "Please enter VNC Password..."
-# docker run ${DOCKER_OPT} \
-# 	--name=${DOCKER_NAME} \
-# 	-it --entrypoint "setup_vncpasswd.sh" \
-# 	${NAME_IMAGE}:latest
-
-# CONTAINER_ID=$(docker ps -a | grep ${NAME_IMAGE} | awk '{print $1}')
-
-# docker commit ${DOCKER_NAME} ${NAME_IMAGE}:latest
-# docker stop $CONTAINER_ID
-# docker rm $CONTAINER_ID -f
-
 nohup ./launch_container.sh vnc test none > /tmp/nohup_${USER}.out 2>&1 &
 
 echo "Please wait..."

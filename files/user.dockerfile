@@ -113,6 +113,7 @@ RUN rosdep update
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> /home/${USERNAME}/.bashrc
 
 COPY fix_chrome_browser.sh /home/${USERNAME}/fix_chrome_browser.sh
+<<<<<<< HEAD
 
 RUN sudo gpasswd -a $USERNAME ssl-cert
 
@@ -127,6 +128,17 @@ RUN chmod +x /usr/local/bin/setup_vncpasswd.sh
 RUN rm /etc/kasmvnc/kasmvnc.yaml
 COPY kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
 
+=======
+
+USER root
+RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME}/fix_chrome_browser.sh
+RUN chmod +x /home/${USERNAME}/fix_chrome_browser.sh
+RUN apt update
+RUN apt upgrade -y
+
+# Fix chrome
+RUN sed -i -e "s#/usr/bin/google-chrome-stable#/usr/bin/google-chrome-stable --no-sandbox#g" /usr/share/applications/google-chrome.desktop
+>>>>>>> main
 
 # Enable ssh
 RUN systemctl enable ssh
