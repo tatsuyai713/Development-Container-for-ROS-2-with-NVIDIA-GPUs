@@ -144,6 +144,7 @@ DOCKER_OPT="${DOCKER_OPT} \
 	-e SIZEW=${RESOLUTION_W} -e SIZEH=${RESOLUTION_H} -e REFRESH=60 -e DPI=96 -e CDEPTH=24 \
 	--tmpfs /dev/shm:rw \
 	-p 1$(id -u):8444 \
+	-p 2$(id -u):3389 \
 	-e PULSE_SERVER=unix:/run/pulse/native \
 	--hostname $(hostname)-Docker \
 	--add-host $(hostname)-Docker:127.0.1.1"
