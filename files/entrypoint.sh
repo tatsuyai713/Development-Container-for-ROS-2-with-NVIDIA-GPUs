@@ -68,6 +68,7 @@ else
 fi
 
 dbus-launch fcitx &
+sudo service xrdp restart
 
 # Add custom processes right below this line, or within `supervisord.conf` to perform service management similar to systemd
 

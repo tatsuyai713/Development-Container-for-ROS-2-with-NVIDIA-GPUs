@@ -409,8 +409,6 @@ RUN apt-get update && apt-get install -y \
         libdbus-1-dev && \
     rm -rf /var/lib/apt/lists/*
 
-
-
 # install ROS2 Humble
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
@@ -435,7 +433,30 @@ RUN apt-get update && apt-get install -y \
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 
-USER root
+# XRDP Setup
+RUN apt update && apt install -y xrdp
+RUN apt install -y git libpulse-dev autoconf m4 intltool build-essential dpkg-dev libtool libsndfile1-dev libspeexdsp-dev libudev-dev
+
+RUN cp /etc/apt/sources.list /etc/apt/sources.list.org
+RUN sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+RUN apt-get update
+
+RUN apt build-dep pulseaudio -y
+RUN cd /tmp && apt source pulseaudio && ln -s /tmp/pulseaudio-1* /tmp/pulseaudio-src
+
+RUN cd /tmp/pulseaudio-1* && meson build && meson compile -C build ; exit 0 
+RUN cd /tmp/pulseaudio-1* && build/src/daemon/pulseaudio -n -F build/src/daemon/default.pa -p $(pwd)/build/src/; exit 0 
+
+RUN cd /tmp && git clone https://github.com/neutrinolabs/pulseaudio-module-xrdp.git && cd pulseaudio-module-xrdp 
+#     scripts/install_pulseaudio_sources_apt_wrapper.sh; exit 0 
+RUN apt install -y sudo lsb-release
+RUN cd /tmp/pulseaudio-module-xrdp && \
+    ./bootstrap && \
+    ./configure PULSE_DIR=/tmp/pulseaudio-src/ && \
+    make install
+RUN total_lines=$(wc -l < /etc/xrdp/startwm.sh) && insert_line=$((total_lines - 2)) && sed -i "${insert_line}i /bin/bash -c '/usr/bin/pulseaudio --start'" /etc/xrdp/startwm.sh
+RUN rm /etc/apt/sources.list
+RUN mv /etc/apt/sources.list.org /etc/apt/sources.list 
 
 # Copy scripts and configurations used to start the container
 COPY entrypoint.sh /etc/entrypoint.sh
